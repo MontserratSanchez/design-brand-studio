@@ -1,14 +1,37 @@
 {
-  "generado": "2026-11-04T18:00:00.000Z",
+  "generado": "2026-11-04T20:22:35.917Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
-    "k1_mediana_min": null,
-    "k1_n": 0,
-    "k2_tasa_aprobacion": null,
-    "k2_n": 0,
+    "k1_mediana_min": 0.3,
+    "k1_n": 1,
+    "k2_tasa_aprobacion": 1,
+    "k2_n": 1,
     "k3_usd_por_caso": null,
-    "k3_n": 0,
-    "k3_nota": "Aún no hay casos completados"
+    "k3_n": 1,
+    "k3_nota": "Hay llamadas sin tarifa registrada; K3 no se calcula para no reportar cero"
   },
-  "casos": []
+  "casos": [
+    {
+      "caso_id": "DBS-20261104-PRB1",
+      "canal": null,
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "tipo_campana": "lanzamiento",
+      "duracion_semanas": 6,
+      "ts_solicitud": null,
+      "ts_propuesta_lista": "2026-11-04T20:03:57.083Z",
+      "version": 1
+    },
+    {
+      "caso_id": "DBS-20261104-GRPF",
+      "canal": "telegram",
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
+      "tipo_campana": "lanzamiento",
+      "duracion_semanas": 6,
+      "ts_solicitud": "2026-11-04T20:08:36.094Z",
+      "ts_propuesta_lista": "2026-11-04T20:08:52.253Z",
+      "version": 1
+    }
+  ]
 }
