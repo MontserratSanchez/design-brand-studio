@@ -1,14 +1,14 @@
 {
-  "generado": "2026-11-04T20:22:35.917Z",
+  "generado": "2026-11-04T23:32:06.859Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
-    "k1_mediana_min": 0.3,
-    "k1_n": 1,
+    "k1_mediana_min": 0.2,
+    "k1_n": 2,
     "k2_tasa_aprobacion": 1,
-    "k2_n": 1,
-    "k3_usd_por_caso": null,
-    "k3_n": 1,
-    "k3_nota": "Hay llamadas sin tarifa registrada; K3 no se calcula para no reportar cero"
+    "k2_n": 2,
+    "k3_usd_por_caso": 0.010403,
+    "k3_n": 2,
+    "k3_nota": null
   },
   "casos": [
     {
@@ -31,6 +31,17 @@
       "duracion_semanas": 6,
       "ts_solicitud": "2026-11-04T20:08:36.094Z",
       "ts_propuesta_lista": "2026-11-04T20:08:52.253Z",
+      "version": 1
+    },
+    {
+      "caso_id": "DBS-20261104-H8F5",
+      "canal": "voz",
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
+      "tipo_campana": "posicionamiento",
+      "duracion_semanas": 4,
+      "ts_solicitud": "2026-11-04T21:24:32.625Z",
+      "ts_propuesta_lista": "2026-11-04T21:24:46.381Z",
       "version": 1
     }
   ]
