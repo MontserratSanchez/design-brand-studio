@@ -1,0 +1,53 @@
+# Valida datos, reglas, concatenación y secretos; publica web/ en GitHub Pages solo si todo pasa.
+# Se activa con cambios en main (incluido el commit diario de la exportación sanitizada desde n8n) y manualmente.
+name: Validar y publicar
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Versión de Node del runner
+        run: node --version
+      - name: Controles previos al despliegue
+        run: node scripts/validar.js
+      - name: Preparar sitio
+        run: |
+          mkdir -p _site
+          cp -r web/. _site/
+      - name: Revisar el artefacto publicado
+        run: node scripts/revisar_secretos.js _site
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Subir artefacto
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  publicar:
+    needs: validar
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
