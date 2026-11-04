@@ -1,0 +1,9 @@
+clave,nombre,tipo_cobro,precio_mxn,costo_mxn,horas,requiere,canales,activo
+S-EST01,Estrategia y plan de campaña,fijo,18000,9500,24,,,si
+S-CRE01,Concepto creativo y key visual,fijo,22000,12000,30,,,si
+S-CON01,Contenido para redes (10 piezas por semana),semanal,9500,5600,14,,meta|tiktok|linkedin,si
+S-VID01,Paquete de 4 videos cortos,fijo,16000,9800,20,,,si
+S-PAU01,Gestión de pauta digital,semanal,6000,3300,8,S-REP01,meta|google|tiktok|linkedin,si
+S-LND01,Landing page de campaña,fijo,14000,8000,22,,,si
+S-EML01,Email marketing (1 envío por semana),semanal,4500,2500,6,,email,si
+S-REP01,Reporte semanal de resultados,semanal,3000,1600,4,,,si

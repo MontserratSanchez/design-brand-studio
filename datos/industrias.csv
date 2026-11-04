@@ -1,0 +1,11 @@
+clave,nombre,regulada
+retail,Comercio minorista,no
+tecnologia,Tecnología,no
+alimentos,Alimentos y restaurantes,no
+educacion,Educación,no
+turismo,Turismo y hotelería,no
+moda,Moda y belleza,no
+salud,Salud y farmacéutica,si
+financiera,Servicios financieros,si
+bebidas_alcoholicas,Bebidas alcohólicas,si
+apuestas,Apuestas y juegos de azar,si

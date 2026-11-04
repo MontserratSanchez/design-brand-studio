@@ -1,0 +1,14 @@
+{
+  "generado": "2026-11-04T18:00:00.000Z",
+  "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
+  "kpi": {
+    "k1_mediana_min": null,
+    "k1_n": 0,
+    "k2_tasa_aprobacion": null,
+    "k2_n": 0,
+    "k3_usd_por_caso": null,
+    "k3_n": 0,
+    "k3_nota": "Aún no hay casos completados"
+  },
+  "casos": []
+}

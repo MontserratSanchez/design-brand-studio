@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design &amp; Brand Studio · Panel de propuestas</title>
+<meta name="description" content="Panel de prueba con datos ficticios: estado de briefs de campaña procesados por agentes de IA.">
+<style>
+  :root { --bg:#fbfaf7; --surface:#ffffff; --ink:#1f1d1a; --muted:#5f5a52; --line:#e4dfd6; --accent:#8a3b12; --ok:#2f6b3a; --warn:#8a5a00; --bad:#9b2c2c; --focus:#1d4ed8; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151412; --surface:#1e1c19; --ink:#f1ede6; --muted:#b5ada1; --line:#36322c; --accent:#e39a6c; --ok:#7cc48a; --warn:#e3b45a; --bad:#ef8a8a; --focus:#93b4ff; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width:1100px; margin:0 auto; padding:24px 16px 64px; }
+  header { border-bottom:1px solid var(--line); padding-bottom:16px; margin-bottom:24px; }
+  h1 { font-size:1.6rem; margin:0 0 4px; }
+  h2 { font-size:1.15rem; margin:32px 0 12px; }
+  .meta { color:var(--muted); font-size:.92rem; margin:0; }
+  .rotulo { display:inline-block; margin-top:8px; padding:2px 10px; border:1px solid var(--warn); color:var(--warn); border-radius:999px; font-size:.8rem; font-weight:600; letter-spacing:.02em; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+  .kpi { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .kpi .nombre { color:var(--muted); font-size:.85rem; margin:0; }
+  .kpi .valor { font-size:1.9rem; font-weight:700; margin:4px 0; font-variant-numeric:tabular-nums; }
+  .kpi .def { color:var(--muted); font-size:.8rem; margin:0; }
+  .vacio { color:var(--muted); font-style:italic; }
+  .filtros { display:flex; flex-wrap:wrap; gap:8px; align-items:end; margin-bottom:12px; }
+  label { font-size:.85rem; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+  select, button, input { font:inherit; padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); }
+  button { cursor:pointer; }
+  :focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+  .tabla { overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface); }
+  table { border-collapse:collapse; width:100%; font-size:.9rem; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th { color:var(--muted); font-weight:600; }
+  .estado { font-weight:600; }
+  .voz { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .aviso { padding:10px 12px; border-radius:8px; border:1px solid var(--line); margin-top:8px; }
+  .aviso.error { border-color:var(--bad); color:var(--bad); }
+  footer { margin-top:40px; color:var(--muted); font-size:.82rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Design &amp; Brand Studio</h1>
+    <p class="meta">Consultora de marketing. Propósito: dar seguimiento a los briefs de campaña que procesan cuatro agentes de IA y una coordinadora de cuentas humana.</p>
+    <p class="meta">Fuente: exportación sanitizada del registro privado en n8n · <span id="actualizado">Cargando…</span></p>
+    <span class="rotulo">DATOS FICTICIOS · RESULTADO SIMULADO</span>
+  </header>
+
+  <main>
+    <section aria-labelledby="t-kpi">
+      <h2 id="t-kpi">Indicadores del proceso</h2>
+      <div class="kpis" id="kpis" aria-live="polite">
+        <p class="vacio">Cargando indicadores…</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="t-casos">
+      <h2 id="t-casos">Historial de casos</h2>
+      <div class="filtros">
+        <label>Estado<select id="f-estado"><option value="">Todos</option></select></label>
+        <label>Canal<select id="f-canal"><option value="">Todos</option><option value="telegram">Telegram</option><option value="voz">Voz</option></select></label>
+        <button type="button" id="f-reset">Restablecer filtros</button>
+      </div>
+      <div class="tabla" role="region" aria-labelledby="t-casos" tabindex="0">
+        <table>
+          <thead><tr><th scope="col">Folio</th><th scope="col">Canal</th><th scope="col">Estado</th><th scope="col">Decisión</th><th scope="col">Tipo de campaña</th><th scope="col">Semanas</th><th scope="col">Versión</th><th scope="col">Solicitud (UTC)</th></tr></thead>
+          <tbody id="tbody"><tr><td colspan="8" class="vacio">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="t-voz">
+      <h2 id="t-voz">Consulta por voz</h2>
+      <div class="voz">
+        <p>El asistente de voz es una <strong>inteligencia artificial</strong>. Puede registrar un brief de campaña de prueba o consultar el estado de un folio. Solo maneja datos ficticios; no compartas información personal.</p>
+        <label style="flex-direction:row; align-items:center; gap:8px; color:var(--ink);">
+          <input type="checkbox" id="consentimiento"> Entiendo que hablaré con una IA y acepto usar el micrófono para esta prueba.
+        </label>
+        <div id="voz-zona"></div>
+        <p class="meta" style="margin-top:12px;">¿Sin micrófono? Usa el bot de Telegram del proyecto con <code>/estado FOLIO</code>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Proyecto académico AI Tools. Consultora, empresas cliente, honorarios y decisiones son ficticios. Ninguna propuesta genera compromiso real.</footer>
+</div>
+
+<script>
+// Identificador PÚBLICO del agente de ElevenLabs (no es una credencial). Déjalo vacío hasta configurarlo.
+const AGENTE_VOZ_ID = '';
+const HORAS_DESACTUALIZADO = 36;
+
+const fmtPct = v => (v * 100).toLocaleString('es-MX', { maximumFractionDigits: 1 }) + ' %';
+let datos = null;
+
+function kpiHTML(nombre, valor, def, n) {
+  const vacio = valor === null || valor === undefined;
+  return '<article class="kpi"><p class="nombre">' + nombre + '</p>' +
+    '<p class="valor' + (vacio ? ' vacio' : '') + '">' + (vacio ? 'Sin datos' : valor) + '</p>' +
+    '<p class="def">' + def + ' · n = ' + (n || 0) + '</p></article>';
+}
+
+function pintarKPI(k) {
+  document.getElementById('kpis').innerHTML =
+    kpiHTML('K1 · Tiempo a propuesta lista', k.k1_mediana_min === null ? null : k.k1_mediana_min.toLocaleString('es-MX') + ' min', 'Mediana de minutos entre solicitud y propuesta lista', k.k1_n) +
+    kpiHTML('K2 · Tasa de aprobación humana', k.k2_tasa_aprobacion === null ? null : fmtPct(k.k2_tasa_aprobacion), 'Aprobadas / (aprobadas + rechazadas + vencidas)', k.k2_n) +
+    kpiHTML('K3 · Costo variable por caso', k.k3_usd_por_caso === null ? null : k.k3_usd_por_caso.toLocaleString('es-MX', { maximumFractionDigits: 4 }) + ' USD', k.k3_nota || 'Costo de modelo de casos completados / casos completados', k.k3_n);
+}
+
+function pintarTabla() {
+  const fe = document.getElementById('f-estado').value;
+  const fc = document.getElementById('f-canal').value;
+  const filas = datos.casos.filter(c => (!fe || c.estado === fe) && (!fc || c.canal === fc));
+  const tb = document.getElementById('tbody');
+  if (!datos.casos.length) { tb.innerHTML = '<tr><td colspan="8" class="vacio">Todavía no hay casos exportados.</td></tr>'; return; }
+  if (!filas.length) { tb.innerHTML = '<tr><td colspan="8" class="vacio">Ningún caso coincide con los filtros.</td></tr>'; return; }
+  const esc = s => String(s === null || s === undefined ? '—' : s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+  tb.innerHTML = filas.map(c => '<tr><td>' + esc(c.caso_id) + '</td><td>' + esc(c.canal) + '</td><td class="estado">' + esc(String(c.estado || '').replace(/_/g, ' ')) + '</td><td>' + esc(c.decision) + '</td><td>' + esc(c.tipo_campana ? String(c.tipo_campana).replace(/_/g, ' ') : null) + '</td><td>' + esc(c.duracion_semanas) + '</td><td>' + esc(c.version) + '</td><td>' + esc(c.ts_solicitud ? c.ts_solicitud.slice(0, 16).replace('T', ' ') : null) + '</td></tr>').join('');
+}
+
+async function cargar() {
+  try {
+    const r = await fetch('data/publico.json', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    datos = await r.json();
+    const gen = new Date(datos.generado);
+    const horas = (Date.now() - gen.getTime()) / 36e5;
+    document.getElementById('actualizado').textContent = 'Actualizado: ' + gen.toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) + (horas > HORAS_DESACTUALIZADO ? ' · DATOS DESACTUALIZADOS' : '');
+    pintarKPI(datos.kpi);
+    const estados = [...new Set(datos.casos.map(c => c.estado))].sort();
+    document.getElementById('f-estado').insertAdjacentHTML('beforeend', estados.map(e => '<option value="' + e + '">' + e.replace(/_/g, ' ') + '</option>').join(''));
+    pintarTabla();
+  } catch (e) {
+    document.getElementById('actualizado').textContent = 'Error al cargar los datos';
+    document.getElementById('kpis').innerHTML = '<p class="aviso error" role="alert">No se pudieron cargar los indicadores (' + e.message + '). Intenta recargar la página.</p>';
+    document.getElementById('tbody').innerHTML = '<tr><td colspan="8" class="vacio">Sin datos por error de carga.</td></tr>';
+  }
+}
+
+document.getElementById('f-estado').addEventListener('change', pintarTabla);
+document.getElementById('f-canal').addEventListener('change', pintarTabla);
+document.getElementById('f-reset').addEventListener('click', () => { document.getElementById('f-estado').value = ''; document.getElementById('f-canal').value = ''; pintarTabla(); });
+
+// El widget se inserta solo después del consentimiento explícito
+document.getElementById('consentimiento').addEventListener('change', ev => {
+  const zona = document.getElementById('voz-zona');
+  if (!ev.target.checked) { zona.innerHTML = ''; return; }
+  if (!AGENTE_VOZ_ID) { zona.innerHTML = '<p class="aviso" role="status">El agente de voz aún no está configurado en este entorno. Usa Telegram mientras tanto.</p>'; return; }
+  zona.innerHTML = '';
+  const w = document.createElement('elevenlabs-convai');
+  w.setAttribute('agent-id', AGENTE_VOZ_ID);
+  zona.appendChild(w);
+  if (!document.getElementById('convai-script')) {
+    const s = document.createElement('script');
+    s.id = 'convai-script';
+    s.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+    s.async = true;
+    s.onerror = () => { zona.innerHTML = '<p class="aviso error" role="alert">El servicio de voz no está disponible. Usa el bot de Telegram con /estado FOLIO.</p>'; };
+    document.body.appendChild(s);
+  }
+});
+
+cargar();
+</script>
+</body>
+</html>
