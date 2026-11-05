@@ -45,7 +45,11 @@ Constrúyelos en orden: **W3 → W2 → W1 → W4 → W5**. Cada uno llama al an
 6. **L02 Procesar respuesta**: Code (`l02_procesar_respuesta.js`).
 7. **Guardar costo**: Data Table → Row → Insert en la tabla `costos`. Mapea cada columna con `{{ $json.fila_costo.<columna> }}`.
 8. **Guardar traza**: Data Table → Row → Insert en la tabla `trazas`. Mapea con `{{ $('L02 Procesar respuesta').first().json.fila_traza.<columna> }}`.
-9. **L04 Devolver**: Code con una sola línea: `return [{ json: $('L02 Procesar respuesta').first().json }];`
+9. Después de **Guardar traza**, añade **L03 Preparar entrega**: Code (`l03_mensaje_entrega.js`). Luego **¿Hay entrega?**: IF con `{{ Boolean($json.mensaje_entrega) }}` is true.
+   - true → **Informar entrega**: Telegram Send Message con la misma credencial del bot, chat `{{ $json.mensaje_entrega.chat_id }}` y texto `{{ $json.mensaje_entrega.texto }}`. Usa **Parse Mode: HTML** y escapa el texto con `{{ $json.mensaje_entrega.texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}`. Settings → **On Error: Continue**; sin reintentos automáticos, para no duplicar avisos. Después → **L04 Devolver**.
+   - false → **L04 Devolver** directamente.
+   - **L04 Devolver** conserva exactamente `return [{ json: $('L02 Procesar respuesta').first().json }];`. La respuesta de Telegram nunca sustituye la respuesta del agente.
+   - Los avisos se envían a la coordinadora autorizada por el contexto de W2, una vez por llamada real. Incluyen folio, iteración, salida y ruta prevista. No anuncian etapas no ejecutadas ni sustituyen los controles del orquestador o la aprobación humana.
 10. Rama **false** de ¿Permitido?:
     - **L05 Bloqueo**: Code (`l05_bloqueo_presupuesto.js`).
     - Después, **Guardar traza bloqueo** (Insert en `trazas` con `{{ $json.fila_traza.<columna> }}`).
@@ -83,6 +87,8 @@ Rama de aprobación:
     - Chat ID: `{{ $('O08 Preparar aprobación').first().json.mensaje_coordinadora.chat_id }}`. Text: `{{ $('O08 Preparar aprobación').first().json.mensaje_coordinadora.texto }}`.
     - Reply Markup: **Inline Keyboard** con dos botones. "Aprobar" con Callback Data `{{ $('O08 Preparar aprobación').first().json.callback_aprobar }}`; "Rechazar" con `{{ ... .callback_rechazar }}`.
 16. **¿Avisar solicitante?**: IF con `{{ $('O08 Preparar aprobación').first().json.aviso_solicitante.chat_id }}` is not empty → Telegram Send Message con ese chat y ese texto.
+
+El mensaje de O08 muestra la cadena A1–A4 según `ctx.historial`, conserva los botones y enlaza al panel público: https://montserratsanchez.github.io/design-brand-studio/. El panel refleja la última exportación de W5; no se promete actualización instantánea.
 
 Rama de cierre (entran O02, O04 y O07):
 
