@@ -1,24 +1,24 @@
 {
-  "generado": "2026-11-05T06:03:43.385Z",
+  "generado": "2026-11-05T06:29:05.799Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
     "k1_mediana_min": 0.3,
-    "k1_n": 7,
-    "k2_tasa_aprobacion": 1,
-    "k2_n": 4,
-    "k3_usd_por_caso": 0.002041,
-    "k3_n": 3,
+    "k1_n": 8,
+    "k2_tasa_aprobacion": 0.75,
+    "k2_n": 8,
+    "k3_usd_por_caso": 0.002517,
+    "k3_n": 6,
     "k3_casos_sin_registro": 1,
-    "k3_fallidos_usd": 0.004605,
-    "k3_fallidos_n": 1,
+    "k3_fallidos_usd": 0.005674,
+    "k3_fallidos_n": 3,
     "k3_nota": "1 caso(s) completado(s) sin llamadas registradas quedan fuera del promedio"
   },
   "casos": [
     {
       "caso_id": "DBS-20261104-PRB1",
       "canal": null,
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_vencido",
+      "decision": "vencida",
       "tipo_campana": "lanzamiento",
       "duracion_semanas": 6,
       "ts_solicitud": null,
@@ -72,8 +72,8 @@
     {
       "caso_id": "DBS-20261105-QWWR",
       "canal": "telegram",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
       "tipo_campana": "posicionamiento",
       "duracion_semanas": 5,
       "ts_solicitud": "2026-11-05T05:25:30.022Z",
@@ -94,8 +94,8 @@
     {
       "caso_id": "DBS-20261105-QN6A",
       "canal": "telegram",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_rechazado",
+      "decision": "rechazada",
       "tipo_campana": "generacion_leads",
       "duracion_semanas": 6,
       "ts_solicitud": "2026-11-05T06:00:39.581Z",
@@ -105,20 +105,64 @@
     {
       "caso_id": "DBS-20261105-ZYFZ",
       "canal": "telegram",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
       "tipo_campana": "generacion_leads",
       "duracion_semanas": 6,
       "ts_solicitud": "2026-11-05T06:03:26.025Z",
       "ts_propuesta_lista": "2026-11-05T06:03:42.674Z",
+      "version": 1
+    },
+    {
+      "caso_id": "DBS-20261105-TTM6",
+      "canal": "telegram",
+      "estado": "requiere_datos",
+      "decision": null,
+      "tipo_campana": null,
+      "duracion_semanas": null,
+      "ts_solicitud": "2026-11-05T06:15:02.204Z",
+      "ts_propuesta_lista": null,
+      "version": 0
+    },
+    {
+      "caso_id": "DBS-20261105-G87G",
+      "canal": "telegram",
+      "estado": "error",
+      "decision": null,
+      "tipo_campana": null,
+      "duracion_semanas": null,
+      "ts_solicitud": "2026-11-05T06:16:40.123Z",
+      "ts_propuesta_lista": null,
+      "version": 0
+    },
+    {
+      "caso_id": "DBS-20261105-YCHN",
+      "canal": "telegram",
+      "estado": "error",
+      "decision": null,
+      "tipo_campana": null,
+      "duracion_semanas": null,
+      "ts_solicitud": "2026-11-05T06:18:16.456Z",
+      "ts_propuesta_lista": null,
+      "version": 0
+    },
+    {
+      "caso_id": "DBS-20261105-T6RE",
+      "canal": "voz",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "tipo_campana": "temporada",
+      "duracion_semanas": 3,
+      "ts_solicitud": "2026-11-05T06:28:49.128Z",
+      "ts_propuesta_lista": "2026-11-05T06:29:05.246Z",
       "version": 1
     }
   ],
   "fichas": [
     {
       "caso_id": "DBS-20261104-PRB1",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_vencido",
+      "decision": "vencida",
       "version": 1,
       "tipo_campana": "lanzamiento",
       "objetivo": null,
@@ -397,8 +441,8 @@
     },
     {
       "caso_id": "DBS-20261105-QWWR",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
       "version": 2,
       "tipo_campana": "posicionamiento",
       "objetivo": null,
@@ -521,8 +565,8 @@
     },
     {
       "caso_id": "DBS-20261105-QN6A",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_rechazado",
+      "decision": "rechazada",
       "version": 1,
       "tipo_campana": "generacion_leads",
       "objetivo": "leads",
@@ -594,8 +638,8 @@
     },
     {
       "caso_id": "DBS-20261105-ZYFZ",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
       "version": 1,
       "tipo_campana": "generacion_leads",
       "objetivo": "leads",
@@ -663,6 +707,70 @@
         "costo_ia_usd": 0.0022943,
         "llamadas_ia": 4,
         "tokens_ia": 13995
+      }
+    },
+    {
+      "caso_id": "DBS-20261105-T6RE",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "version": 1,
+      "tipo_campana": "temporada",
+      "objetivo": "trafico",
+      "industria": "Turismo y hotelería",
+      "fecha_inicio": "2027-04-12",
+      "canales": [
+        "meta"
+      ],
+      "semanas": 3,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.3,
+      "servicios": [
+        {
+          "clave": "S-CRE01",
+          "nombre": "Concepto creativo y key visual",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 22000,
+          "agregado": false
+        },
+        {
+          "clave": "S-CON01",
+          "nombre": "Contenido para redes (10 piezas por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 3,
+          "importe": 28500,
+          "agregado": false
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 3,
+          "importe": 18000,
+          "agregado": false
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 3,
+          "importe": 9000,
+          "agregado": true
+        }
+      ],
+      "kpi": {
+        "total_mxn": 89900,
+        "honorarios_mxn": 77500,
+        "descuento_mxn": 0,
+        "iva_mxn": 12400,
+        "pauta_mxn": 18000,
+        "horas_equipo": 108,
+        "horas_semana": 36,
+        "capacidad_semana": 140,
+        "mes_capacidad": "2027-04",
+        "costo_ia_usd": 0.0023605,
+        "llamadas_ia": 4,
+        "tokens_ia": 13961
       }
     }
   ]
