@@ -39,6 +39,7 @@ const USUARIOS = [
 // Sub-workflow «DBS · Llamar agente» con la API del modelo simulada
 const costos = [];
 const trazas = [];
+const entregas = [];
 function llamarAgente(itemLlamada, respuestaModelo) {
   const trig = it([itemLlamada]);
   const instrucciones = { data: fs.readFileSync(path.join(raiz, 'agentes', itemLlamada.agente + '.md'), 'utf8') };
@@ -50,6 +51,8 @@ function llamarAgente(itemLlamada, respuestaModelo) {
   }
   const api = { model: prep[0].json.body.model, content: [{ type: 'text', text: JSON.stringify(respuestaModelo) }], stop_reason: 'end_turn', usage: { input_tokens: 1500, output_tokens: 250 } };
   const r = correr('l02_procesar_respuesta', it([api]), { 'L01 Preparar llamada': prep, 'Execute Workflow Trigger': trig });
+  const entrega = correr('l03_mensaje_entrega', r, { 'L02 Procesar respuesta': r })[0].json.mensaje_entrega;
+  if (entrega) entregas.push(entrega);
   costos.push(r[0].json.fila_costo);
   trazas.push(r[0].json.fila_traza);
   return r[0].json;
@@ -109,6 +112,23 @@ const apr = o08[0].json;
 assert.strictEqual(apr.actualizacion_caso.caso_id, CASO);
 assert.strictEqual(apr.callback_aprobar, 'apr:' + CASO + ':v2');
 assert.strictEqual(apr.mensaje_coordinadora.chat_id, '999');
+assert.ok(apr.mensaje_coordinadora.texto.includes('https://montserratsanchez.github.io/design-brand-studio/'));
+assert.ok(apr.mensaje_coordinadora.texto.length <= 4096, 'la aprobación cabe en Telegram');
+for (const nombre of ['A1 · Recepción', 'A2 · Catálogo', 'A3 · Propuesta', 'A4 · Revisor']) {
+  assert.ok(apr.mensaje_coordinadora.texto.includes(nombre));
+}
+assert.strictEqual(entregas.length, 6, 'seis avisos reales: A1, A2 y dos vueltas de A3/A4');
+assert.ok(entregas.every(m => m.chat_id === '999' && m.texto.includes(CASO) && m.texto.length <= 4096));
+assert.ok(entregas[3].texto.includes('devuelto'), 'A4 muestra que pidió una corrección');
+assert.ok(entregas[5].texto.includes('Iteración: 2'), 'no se oculta el reintento');
+const falloEntrega = correr('l03_mensaje_entrega', it([{}]), {
+  'L02 Procesar respuesta': it([{ ctx: r1.ctx, salida: { caso_id: CASO, agente: 'a1_recepcion', estado: 'error', resultado: { texto_crudo: 'NO DIVULGAR' } } }]),
+})[0].json.mensaje_entrega;
+assert.ok(falloEntrega.texto.includes('no produjo una salida válida') && !falloEntrega.texto.includes('NO DIVULGAR'));
+const sinDestino = correr('l03_mensaje_entrega', it([{}]), {
+  'L02 Procesar respuesta': it([{ salida: r1.salida, ctx: {} }]),
+})[0].json.mensaje_entrega;
+assert.strictEqual(sinDestino, null, 'no se elige un destinatario inventado');
 
 // Registro persistido simulado (tabla casos)
 const filaCaso = Object.assign({ caso_id: CASO, canal: 'telegram', usuario: 'U-SOL001', chat_id: '111', ts_solicitud: ingreso.ts_solicitud }, apr.actualizacion_caso);
