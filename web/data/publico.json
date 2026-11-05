@@ -1,14 +1,17 @@
 {
-  "generado": "2026-11-05T02:00:43.804Z",
+  "generado": "2026-11-05T05:44:07.238Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
     "k1_mediana_min": 0.2,
-    "k1_n": 2,
+    "k1_n": 5,
     "k2_tasa_aprobacion": 1,
-    "k2_n": 2,
-    "k3_usd_por_caso": 0.010403,
+    "k2_n": 3,
+    "k3_usd_por_caso": 0.001963,
     "k3_n": 2,
-    "k3_nota": null
+    "k3_casos_sin_registro": 1,
+    "k3_fallidos_usd": 0.004605,
+    "k3_fallidos_n": 1,
+    "k3_nota": "1 caso(s) completado(s) sin llamadas registradas quedan fuera del promedio"
   },
   "casos": [
     {
@@ -42,6 +45,50 @@
       "duracion_semanas": 4,
       "ts_solicitud": "2026-11-04T21:24:32.625Z",
       "ts_propuesta_lista": "2026-11-04T21:24:46.381Z",
+      "version": 1
+    },
+    {
+      "caso_id": "DBS-20261105-VMC2",
+      "canal": "telegram",
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
+      "tipo_campana": "lanzamiento",
+      "duracion_semanas": 6,
+      "ts_solicitud": "2026-11-05T03:01:19.745Z",
+      "ts_propuesta_lista": "2026-11-05T03:01:33.778Z",
+      "version": 1
+    },
+    {
+      "caso_id": "DBS-20261105-HUPJ",
+      "canal": "telegram",
+      "estado": "detenido_limite",
+      "decision": null,
+      "tipo_campana": null,
+      "duracion_semanas": null,
+      "ts_solicitud": "2026-11-05T05:22:04.178Z",
+      "ts_propuesta_lista": null,
+      "version": 0
+    },
+    {
+      "caso_id": "DBS-20261105-QWWR",
+      "canal": "telegram",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "tipo_campana": "posicionamiento",
+      "duracion_semanas": 5,
+      "ts_solicitud": "2026-11-05T05:25:30.022Z",
+      "ts_propuesta_lista": "2026-11-05T05:25:55.646Z",
+      "version": 2
+    },
+    {
+      "caso_id": "DBS-20261105-PBT2",
+      "canal": "telegram",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "tipo_campana": "temporada",
+      "duracion_semanas": 4,
+      "ts_solicitud": "2026-11-05T05:27:37.591Z",
+      "ts_propuesta_lista": "2026-11-05T05:27:52.079Z",
       "version": 1
     }
   ]
