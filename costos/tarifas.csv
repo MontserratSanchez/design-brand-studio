@@ -1,0 +1,8 @@
+proveedor,modelo,concepto,tramo,usd_por_millon_tokens,fuente,fecha_consulta,nota
+anthropic,claude-haiku-5-5,entrada,prompt <= 100000 tokens,0.10,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-05,Tarifa base de entrada
+anthropic,claude-haiku-5-5,salida,prompt <= 100000 tokens,0.50,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-05,Incluye tokens de razonamiento (se cobran como salida y ya vienen en usage.output_tokens)
+anthropic,claude-haiku-5-5,escritura_cache_5m,prompt <= 100000 tokens,0.125,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-05,No se usa caché en el proyecto (tokens_cache = 0)
+anthropic,claude-haiku-5-5,escritura_cache_1h,prompt <= 100000 tokens,0.20,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-05,No se usa caché en el proyecto
+anthropic,claude-haiku-5-5,lectura_cache,prompt <= 100000 tokens,0.01,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-05,No se usa caché en el proyecto
+anthropic,claude-haiku-5-5,entrada,prompt > 100000 tokens,0.50,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-05,No aplica: el límite por caso (40000 tokens) impide prompts de más de 100000
+anthropic,claude-haiku-5-5,salida,prompt > 100000 tokens,2.50,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-05,No aplica (mismo motivo)

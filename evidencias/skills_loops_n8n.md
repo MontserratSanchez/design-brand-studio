@@ -1,7 +1,7 @@
 # Evidencia · Skills y loops ejecutados en n8n
 
 > 2026-11-05 · n8n Cloud (montse.app.n8n.cloud) · commit del repo: `a45985d` (skills y loops). Datos **FICTICIOS**, modo **SIMULADO**.
-> Fuente: ejecuciones de n8n. Los números de ejecución se ven en *Executions* de cada workflow. Los tokens son los que reportó la API (`usage`). El costo en USD queda `null` porque O01 no tiene tarifa registrada (`origen = medido_sin_tarifa`); no se reporta cero.
+> Fuente: ejecuciones de n8n. Los números de ejecución se ven en *Executions* de cada workflow. Los tokens son los que reportó la API (`usage`). Al momento de la prueba, O01 no tenía tarifa, así que el costo quedó `null`; no se reportó cero. El 2026-11-05 se recalculó con la tarifa oficial (ver `costos/README.md`): QWWR 0.0042004 USD, PBT2 0.0021985 USD, HUPJ 0.0046049 USD.
 
 ## Cómo se disparó
 El `/nuevo` se ejecutó en W1 «DBS · Entrada Telegram» de forma manual. Se usó como dato fijado una copia del update real de la ejecución 97, con `update_id` nuevo y otro brief. Después de la prueba se quitó el dato fijado. El resto del recorrido es el de producción: W1 → W2 → W3 (×4 agentes) → aprobación por Telegram.
@@ -55,6 +55,5 @@ El cálculo (O05) da honorarios de 74,000.00, sin descuento porque no supera 150
 - Falta capturar un **bloqueo real** por tiempo, tokens o costo (P09).
 
 ## Límites de esta evidencia
-- Los costos en USD no se calculan hasta registrar la tarifa con fuente y fecha (`costos/tarifas.csv`).
 - Las aprobaciones de QWWR y PBT2 quedan pendientes de la coordinadora en Telegram.
 - La falla de V1 es **inyectada** y está marcada en la traza. Demuestra el mecanismo de corrección, no un error espontáneo del modelo.

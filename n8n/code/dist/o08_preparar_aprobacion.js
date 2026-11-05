@@ -301,9 +301,18 @@ function exportarSanitizado(casos, costos, ahoraISO) {
   const decididos = casos.filter(c => ['aprobada', 'rechazada', 'vencida'].includes(c.decision));
   const aprob = decididos.filter(c => c.decision === 'aprobada').length;
   const completados = new Set(casos.filter(c => c.decision === 'aprobada' || c.decision === 'rechazada').map(c => c.caso_id));
-  const costoCompletados = costos.filter(k => completados.has(k.caso_id));
+  // K3 solo promedia casos completados que SÍ tienen llamadas registradas; un caso sin registro no se cuenta como costo 0
+  const conRegistro = new Set(costos.filter(k => completados.has(k.caso_id)).map(k => k.caso_id));
+  const sinRegistro = [...completados].filter(id => !conRegistro.has(id)).length;
+  const costoCompletados = costos.filter(k => conRegistro.has(k.caso_id));
   const sinTarifa = costoCompletados.some(k => k.costo_usd === null || k.costo_usd === undefined || k.costo_usd === '');
   const sumaCompletados = costoCompletados.reduce((s, k) => s + (Number(k.costo_usd) || 0), 0);
+  // Casos cerrados sin completar (detenidos, rechazados por reglas, error): su costo se reporta aparte, no se oculta
+  const fallidos = new Set(casos.filter(c => ['detenido_limite', 'error', 'revision_humana', 'rechazado', 'requiere_datos', 'sin_capacidad'].includes(c.estado)).map(c => c.caso_id));
+  const costoFallidos = costos.filter(k => fallidos.has(k.caso_id) && k.costo_usd !== null && k.costo_usd !== undefined && k.costo_usd !== '');
+  const notas = [];
+  if (sinTarifa) notas.push('Hay llamadas sin tarifa registrada; K3 no se calcula para no reportar cero');
+  if (sinRegistro) notas.push(sinRegistro + ' caso(s) completado(s) sin llamadas registradas quedan fuera del promedio');
   return {
     generado: ahoraISO,
     rotulo: 'DATOS FICTICIOS · RESULTADO SIMULADO',
@@ -312,9 +321,12 @@ function exportarSanitizado(casos, costos, ahoraISO) {
       k1_n: listos.length,
       k2_tasa_aprobacion: decididos.length ? Math.round((aprob / decididos.length) * 1000) / 1000 : null,
       k2_n: decididos.length,
-      k3_usd_por_caso: completados.size && !sinTarifa ? Math.round((sumaCompletados / completados.size) * 1e6) / 1e6 : null,
-      k3_n: completados.size,
-      k3_nota: sinTarifa ? 'Hay llamadas sin tarifa registrada; K3 no se calcula para no reportar cero' : null,
+      k3_usd_por_caso: conRegistro.size && !sinTarifa ? Math.round((sumaCompletados / conRegistro.size) * 1e6) / 1e6 : null,
+      k3_n: conRegistro.size,
+      k3_casos_sin_registro: sinRegistro,
+      k3_fallidos_usd: Math.round(costoFallidos.reduce((s, k) => s + Number(k.costo_usd), 0) * 1e6) / 1e6,
+      k3_fallidos_n: new Set(costoFallidos.map(k => k.caso_id)).size,
+      k3_nota: notas.length ? notas.join('. ') : null,
     },
     casos: filas,
   };

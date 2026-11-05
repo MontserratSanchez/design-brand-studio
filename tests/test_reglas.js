@@ -5,7 +5,7 @@ const path = require('path');
 const assert = require('assert');
 const raiz = path.join(__dirname, '..');
 const R = new Function(fs.readFileSync(path.join(raiz, 'lib/reglas.js'), 'utf8') +
-  '\nreturn {REGLAS, validarRequerimiento, recuperarDatos, calcularPropuesta, totalesPara, revisarPropuesta, validarAprobacion, detectarInyeccion, generarCasoId, esCasoId};')();
+  '\nreturn {REGLAS, validarRequerimiento, recuperarDatos, calcularPropuesta, totalesPara, revisarPropuesta, validarAprobacion, detectarInyeccion, generarCasoId, esCasoId, exportarSanitizado};')();
 function csv(n) {
   const [c, ...f] = fs.readFileSync(path.join(raiz, 'datos', n), 'utf8').trim().split('\n');
   const k = c.split(',');
@@ -118,5 +118,24 @@ t('Inyección detectada; brief normal no', () => {
 });
 t('caso_id con formato válido', () => {
   for (let i = 0; i < 50; i++) assert.ok(R.esCasoId(R.generarCasoId('2026-11-04T10:00:00Z', Math.random())));
+});
+t('K3: un caso completado sin llamadas registradas no cuenta como costo 0 (error del 0.0104 USD)', () => {
+  const casos = [
+    { caso_id: 'DBS-20261104-GRPF', decision: 'aprobada', estado: 'cerrado_aprobado' },
+    { caso_id: 'DBS-20261104-H8F5', decision: 'aprobada', estado: 'cerrado_aprobado' },
+    { caso_id: 'DBS-20261105-HUPJ', decision: null, estado: 'detenido_limite' },
+  ];
+  const fila = (caso, tin, tout) => ({ caso_id: caso, costo_usd: Math.round(((tin * 0.10 + tout * 0.50) / 1e6) * 1e8) / 1e8 });
+  const costos = [fila('DBS-20261104-GRPF', 2020, 402), fila('DBS-20261104-GRPF', 1956, 494), fila('DBS-20261104-GRPF', 2092, 1013), fila('DBS-20261104-GRPF', 2027, 633), fila('DBS-20261105-HUPJ', 4099, 1014)];
+  const k = R.exportarSanitizado(casos, costos, '2026-11-05T06:00:00Z').kpi;
+  assert.strictEqual(k.k3_n, 1);
+  assert.strictEqual(k.k3_casos_sin_registro, 1);
+  assert.strictEqual(k.k3_usd_por_caso, 0.002081, 'GRPF con tarifa oficial: (8,095 × 0.10 + 2,542 × 0.50) / 1e6');
+  assert.strictEqual(k.k3_fallidos_n, 1);
+  assert.ok(k.k3_nota.includes('sin llamadas registradas'));
+});
+t('K3: sin tarifa no se reporta cero', () => {
+  const k = R.exportarSanitizado([{ caso_id: 'DBS-20261104-GRPF', decision: 'aprobada' }], [{ caso_id: 'DBS-20261104-GRPF', costo_usd: null }], '2026-11-05T06:00:00Z').kpi;
+  assert.strictEqual(k.k3_usd_por_caso, null);
 });
 console.log(n + ' pruebas OK');
