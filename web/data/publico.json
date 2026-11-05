@@ -1,13 +1,13 @@
 {
-  "generado": "2026-11-05T05:44:07.238Z",
+  "generado": "2026-11-05T06:03:43.385Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
-    "k1_mediana_min": 0.2,
-    "k1_n": 5,
+    "k1_mediana_min": 0.3,
+    "k1_n": 7,
     "k2_tasa_aprobacion": 1,
-    "k2_n": 3,
-    "k3_usd_por_caso": 0.001963,
-    "k3_n": 2,
+    "k2_n": 4,
+    "k3_usd_por_caso": 0.002041,
+    "k3_n": 3,
     "k3_casos_sin_registro": 1,
     "k3_fallidos_usd": 0.004605,
     "k3_fallidos_n": 1,
@@ -83,13 +83,587 @@
     {
       "caso_id": "DBS-20261105-PBT2",
       "canal": "telegram",
-      "estado": "pendiente_aprobacion",
-      "decision": null,
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
       "tipo_campana": "temporada",
       "duracion_semanas": 4,
       "ts_solicitud": "2026-11-05T05:27:37.591Z",
       "ts_propuesta_lista": "2026-11-05T05:27:52.079Z",
       "version": 1
+    },
+    {
+      "caso_id": "DBS-20261105-QN6A",
+      "canal": "telegram",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "tipo_campana": "generacion_leads",
+      "duracion_semanas": 6,
+      "ts_solicitud": "2026-11-05T06:00:39.581Z",
+      "ts_propuesta_lista": "2026-11-05T06:00:57.608Z",
+      "version": 1
+    },
+    {
+      "caso_id": "DBS-20261105-ZYFZ",
+      "canal": "telegram",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "tipo_campana": "generacion_leads",
+      "duracion_semanas": 6,
+      "ts_solicitud": "2026-11-05T06:03:26.025Z",
+      "ts_propuesta_lista": "2026-11-05T06:03:42.674Z",
+      "version": 1
+    }
+  ],
+  "fichas": [
+    {
+      "caso_id": "DBS-20261104-PRB1",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "version": 1,
+      "tipo_campana": "lanzamiento",
+      "objetivo": null,
+      "industria": null,
+      "fecha_inicio": null,
+      "canales": null,
+      "semanas": 6,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": null,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CRE01",
+          "nombre": "Concepto creativo y key visual",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 22000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CON01",
+          "nombre": "Contenido para redes (10 piezas por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 57000,
+          "agregado": null
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 36000,
+          "agregado": null
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 18000,
+          "agregado": null
+        }
+      ],
+      "kpi": {
+        "total_mxn": 161147.2,
+        "honorarios_mxn": 151000,
+        "descuento_mxn": 12080,
+        "iva_mxn": 22227.2,
+        "pauta_mxn": 60000,
+        "horas_equipo": 210,
+        "horas_semana": 35,
+        "capacidad_semana": null,
+        "mes_capacidad": null,
+        "costo_ia_usd": 0.0086896,
+        "llamadas_ia": 16,
+        "tokens_ia": 43612
+      }
+    },
+    {
+      "caso_id": "DBS-20261104-GRPF",
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
+      "version": 1,
+      "tipo_campana": "lanzamiento",
+      "objetivo": null,
+      "industria": null,
+      "fecha_inicio": null,
+      "canales": null,
+      "semanas": 6,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.3,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CRE01",
+          "nombre": "Concepto creativo y key visual",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 22000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CON01",
+          "nombre": "Contenido para redes (10 piezas por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 57000,
+          "agregado": null
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 36000,
+          "agregado": null
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 18000,
+          "agregado": null
+        }
+      ],
+      "kpi": {
+        "total_mxn": 161147.2,
+        "honorarios_mxn": 151000,
+        "descuento_mxn": 12080,
+        "iva_mxn": 22227.2,
+        "pauta_mxn": 60000,
+        "horas_equipo": 210,
+        "horas_semana": 35,
+        "capacidad_semana": null,
+        "mes_capacidad": null,
+        "costo_ia_usd": 0.0020805,
+        "llamadas_ia": 4,
+        "tokens_ia": 10637
+      }
+    },
+    {
+      "caso_id": "DBS-20261104-H8F5",
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
+      "version": 1,
+      "tipo_campana": "posicionamiento",
+      "objetivo": null,
+      "industria": null,
+      "fecha_inicio": null,
+      "canales": null,
+      "semanas": 4,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.2,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CRE01",
+          "nombre": "Concepto creativo y key visual",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 22000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CON01",
+          "nombre": "Contenido para redes (10 piezas por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 4,
+          "importe": 38000,
+          "agregado": null
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 4,
+          "importe": 24000,
+          "agregado": null
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 4,
+          "importe": 12000,
+          "agregado": null
+        }
+      ],
+      "kpi": {
+        "total_mxn": 132240,
+        "honorarios_mxn": 114000,
+        "descuento_mxn": 0,
+        "iva_mxn": 18240,
+        "pauta_mxn": 48000,
+        "horas_equipo": 158,
+        "horas_semana": 39.5,
+        "capacidad_semana": null,
+        "mes_capacidad": null,
+        "costo_ia_usd": null,
+        "llamadas_ia": 0,
+        "tokens_ia": 0
+      }
+    },
+    {
+      "caso_id": "DBS-20261105-VMC2",
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
+      "version": 1,
+      "tipo_campana": "lanzamiento",
+      "objetivo": null,
+      "industria": null,
+      "fecha_inicio": null,
+      "canales": null,
+      "semanas": 6,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.2,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CRE01",
+          "nombre": "Concepto creativo y key visual",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 22000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CON01",
+          "nombre": "Contenido para redes (10 piezas por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 57000,
+          "agregado": null
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 36000,
+          "agregado": null
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 18000,
+          "agregado": null
+        }
+      ],
+      "kpi": {
+        "total_mxn": 161147.2,
+        "honorarios_mxn": 151000,
+        "descuento_mxn": 12080,
+        "iva_mxn": 22227.2,
+        "pauta_mxn": 60000,
+        "horas_equipo": 210,
+        "horas_semana": 35,
+        "capacidad_semana": null,
+        "mes_capacidad": null,
+        "costo_ia_usd": 0.001845,
+        "llamadas_ia": 4,
+        "tokens_ia": 10154
+      }
+    },
+    {
+      "caso_id": "DBS-20261105-QWWR",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "version": 2,
+      "tipo_campana": "posicionamiento",
+      "objetivo": null,
+      "industria": null,
+      "fecha_inicio": null,
+      "canales": null,
+      "semanas": 5,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.4,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": null
+        },
+        {
+          "clave": "S-CON01",
+          "nombre": "Contenido para redes (10 piezas por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 5,
+          "importe": 47500,
+          "agregado": null
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 5,
+          "importe": 30000,
+          "agregado": null
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 5,
+          "importe": 15000,
+          "agregado": null
+        }
+      ],
+      "kpi": {
+        "total_mxn": 128180,
+        "honorarios_mxn": 110500,
+        "descuento_mxn": 0,
+        "iva_mxn": 17680,
+        "pauta_mxn": 40000,
+        "horas_equipo": 154,
+        "horas_semana": 30.8,
+        "capacidad_semana": null,
+        "mes_capacidad": null,
+        "costo_ia_usd": 0.0042004,
+        "llamadas_ia": 6,
+        "tokens_ia": 24016
+      }
+    },
+    {
+      "caso_id": "DBS-20261105-PBT2",
+      "estado": "cerrado_aprobado",
+      "decision": "aprobada",
+      "version": 1,
+      "tipo_campana": "temporada",
+      "objetivo": null,
+      "industria": null,
+      "fecha_inicio": null,
+      "canales": null,
+      "semanas": 4,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.2,
+      "servicios": [
+        {
+          "clave": "S-CRE01",
+          "nombre": "Concepto creativo y key visual",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 22000,
+          "agregado": null
+        },
+        {
+          "clave": "S-VID01",
+          "nombre": "Paquete de 4 videos cortos",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 16000,
+          "agregado": null
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 4,
+          "importe": 24000,
+          "agregado": null
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 4,
+          "importe": 12000,
+          "agregado": null
+        }
+      ],
+      "kpi": {
+        "total_mxn": 85840,
+        "honorarios_mxn": 74000,
+        "descuento_mxn": 0,
+        "iva_mxn": 11840,
+        "pauta_mxn": 24000,
+        "horas_equipo": 98,
+        "horas_semana": 24.5,
+        "capacidad_semana": null,
+        "mes_capacidad": null,
+        "costo_ia_usd": 0.0021985,
+        "llamadas_ia": 4,
+        "tokens_ia": 13621
+      }
+    },
+    {
+      "caso_id": "DBS-20261105-QN6A",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "version": 1,
+      "tipo_campana": "generacion_leads",
+      "objetivo": "leads",
+      "industria": "Educación",
+      "fecha_inicio": "2027-02-08",
+      "canales": [
+        "google",
+        "email"
+      ],
+      "semanas": 6,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.3,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": false
+        },
+        {
+          "clave": "S-LND01",
+          "nombre": "Landing page de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 14000,
+          "agregado": false
+        },
+        {
+          "clave": "S-EML01",
+          "nombre": "Email marketing (1 envío por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 27000,
+          "agregado": false
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 36000,
+          "agregado": false
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 18000,
+          "agregado": true
+        }
+      ],
+      "kpi": {
+        "total_mxn": 131080,
+        "honorarios_mxn": 113000,
+        "descuento_mxn": 0,
+        "iva_mxn": 18080,
+        "pauta_mxn": 42000,
+        "horas_equipo": 154,
+        "horas_semana": 25.7,
+        "capacidad_semana": 120,
+        "mes_capacidad": "2027-02",
+        "costo_ia_usd": 0.0024835,
+        "llamadas_ia": 4,
+        "tokens_ia": 14383
+      }
+    },
+    {
+      "caso_id": "DBS-20261105-ZYFZ",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "version": 1,
+      "tipo_campana": "generacion_leads",
+      "objetivo": "leads",
+      "industria": "Educación",
+      "fecha_inicio": "2027-02-08",
+      "canales": [
+        "google",
+        "email"
+      ],
+      "semanas": 6,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.3,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": false
+        },
+        {
+          "clave": "S-LND01",
+          "nombre": "Landing page de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 14000,
+          "agregado": false
+        },
+        {
+          "clave": "S-EML01",
+          "nombre": "Email marketing (1 envío por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 27000,
+          "agregado": false
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 36000,
+          "agregado": false
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 6,
+          "importe": 18000,
+          "agregado": true
+        }
+      ],
+      "kpi": {
+        "total_mxn": 131080,
+        "honorarios_mxn": 113000,
+        "descuento_mxn": 0,
+        "iva_mxn": 18080,
+        "pauta_mxn": 42000,
+        "horas_equipo": 154,
+        "horas_semana": 25.7,
+        "capacidad_semana": 120,
+        "mes_capacidad": "2027-02",
+        "costo_ia_usd": 0.0022943,
+        "llamadas_ia": 4,
+        "tokens_ia": 13995
+      }
     }
   ]
 }
