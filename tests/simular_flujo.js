@@ -40,10 +40,17 @@ const USUARIOS = [
 const costos = [];
 const trazas = [];
 const entregas = [];
-function llamarAgente(itemLlamada, respuestaModelo) {
+const SKILLS = { a3_propuesta: 'cotizar-campana-dbs', a4_revisor: 'revisar-propuesta-dbs' };
+// Igual que el nodo HTTP «Leer skill»: para A3/A4 descarga su SKILL.md; para A1/A2 vuelve a leer las instrucciones
+function leerSkill(agente) {
+  const f = SKILLS[agente] ? path.join(raiz, 'skills', SKILLS[agente], 'SKILL.md') : path.join(raiz, 'agentes', agente + '.md');
+  return { data: fs.readFileSync(f, 'utf8') };
+}
+function llamarAgente(itemLlamada, respuestaModelo, skillForzado) {
   const trig = it([itemLlamada]);
   const instrucciones = { data: fs.readFileSync(path.join(raiz, 'agentes', itemLlamada.agente + '.md'), 'utf8') };
-  const prep = correr('l01_preparar_llamada', it([instrucciones]), { 'Execute Workflow Trigger': trig });
+  const skill = skillForzado || leerSkill(itemLlamada.agente);
+  const prep = correr('l01_preparar_llamada', it([skill]), { 'Execute Workflow Trigger': trig, 'Leer instrucciones': it([instrucciones]), 'Leer skill': it([skill]) });
   if (!prep[0].json.permitido) {
     const b = correr('l05_bloqueo_presupuesto', prep, { 'L01 Preparar llamada': prep, 'Execute Workflow Trigger': trig });
     trazas.push(b[0].json.fila_traza);
@@ -168,7 +175,25 @@ const bloqueo = llamarAgente(sinSaldo, {});
 assert.strictEqual(bloqueo.salida.estado, 'error');
 assert.ok(bloqueo.salida.advertencias[0].startsWith('Guardrail'));
 
+// Skill ausente o de otro agente: el adaptador bloquea y no se llama al modelo
+const sinSkill = llamarAgente(o05[0].json, {}, { data: '404: Not Found' });
+assert.strictEqual(sinSkill.salida.estado, 'error');
+assert.ok(/skill_cargado/.test(sinSkill.salida.advertencias[0]), sinSkill.salida.advertencias[0]);
+const skillAjeno = llamarAgente(o05[0].json, {}, leerSkill('a4_revisor'));
+assert.ok(/skill incorrecto/.test(skillAjeno.salida.advertencias[0]));
+// Tiempo agotado: el loop de seguridad detiene la llamada y O07 cierra el caso sin reintentar
+const viejo = JSON.parse(JSON.stringify(o05[0].json));
+viejo.ctx.ts_solicitud = new Date(Date.now() - 600000).toISOString();
+const tarde = llamarAgente(viejo, {});
+assert.ok(/tiempo_caso/.test(tarde.salida.advertencias[0]));
+const o06t = correr('o06_preparar_a4', it([tarde]), TABLAS);
+const o07t = correr('o07_decidir', it([o06t[0].json]));
+assert.strictEqual(o07t[0].json.actualizacion_caso.estado, 'detenido_limite');
+
 // ---------- 6. Trazabilidad ----------
+// La traza de cada llamada de A3/A4 muestra qué skill (versión y huella) se aplicó
+const trazasSkill = trazas.filter(t => t.tipo === 'llamada_agente' && ['a3_propuesta', 'a4_revisor'].includes(t.agente));
+assert.ok(trazasSkill.length >= 4 && trazasSkill.every(t => /^(cotizar-campana|revisar-propuesta)-dbs@\d+\.\d+\.\d+#[0-9a-f]{8}$/.test(JSON.parse(t.detalle).skill)), 'skill registrado en la traza');
 assert.ok(costos.every(c => c.caso_id === CASO), 'todas las llamadas usan el mismo caso_id');
 assert.ok(costos.every(c => c.costo_usd === null && c.origen === 'medido_sin_tarifa'), 'sin tarifa no se reporta cero');
 const agentes = new Set(costos.map(c => c.agente));
@@ -188,4 +213,5 @@ console.log(JSON.stringify({
   decision: filaCaso.decision,
   voz: v2[0].json.mensaje,
   trazas: trazas.length,
+  skills_en_traza: [...new Set(trazasSkill.map(t => JSON.parse(t.detalle).skill))],
 }, null, 2));

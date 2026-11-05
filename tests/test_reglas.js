@@ -96,6 +96,16 @@ t('A4 determinista: total distinto o promesa de resultados se devuelven', () => 
   assert.strictEqual(R.revisarPropuesta(v.requerimiento, d.datos, p, 'Total $161,147.20 garantizamos duplicar sus ventas. RESULTADO SIMULADO').estado, 'devuelto');
   assert.strictEqual(R.revisarPropuesta(v.requerimiento, d.datos, p, 'Total $161,147.20 MXN. RESULTADO SIMULADO').estado, 'aprobado');
 });
+t('Promesas: se detectan las afirmativas y se ignoran las negaciones', () => {
+  const { v, d } = preparar(base);
+  const p = R.calcularPropuesta(v.requerimiento, d.datos);
+  const rev = txt => R.revisarPropuesta(v.requerimiento, d.datos, p, txt + ' Total $161,147.20 MXN. RESULTADO SIMULADO').estado;
+  assert.strictEqual(rev('La campaña busca impulsar las ventas. No se garantizan resultados específicos.'), 'aprobado');
+  assert.strictEqual(rev('No garantizamos ventas ni alcance; sin garantía de retorno.'), 'aprobado');
+  assert.strictEqual(rev('Le aseguramos que duplicará sus ventas.'), 'devuelto');
+  assert.strictEqual(rev('Resultados garantizados en 6 semanas.'), 'devuelto');
+  assert.strictEqual(rev('Garantizamos más seguidores.'), 'devuelto');
+});
 t('Aprobación vencida, caso no pendiente y rechazo', () => {
   const caso = { caso_id: 'DBS-20261104-ABCD', estado: 'pendiente_aprobacion', version: 1, aprobacion_expira: '2026-11-05T10:00:00Z' };
   assert.strictEqual(R.validarAprobacion('apr:DBS-20261104-ABCD:v1', '9', caso, '9', '2026-11-05T11:00:00Z').vencida, true);

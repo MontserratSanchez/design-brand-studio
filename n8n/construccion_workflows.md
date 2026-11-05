@@ -33,7 +33,11 @@ Constrúyelos en orden: **W3 → W2 → W1 → W4 → W5**. Cada uno llama al an
 2. **Leer instrucciones**: HTTP Request.
    - Method: GET. URL: `{{ $json.url_instrucciones }}`.
    - Options → Response → Response Format: **Text**. La salida queda en el campo `data`.
-3. **L01 Preparar llamada**: Code (`l01_preparar_llamada.js`).
+   - **Leer skill** (adaptador de skills, va justo después de «Leer instrucciones»): HTTP Request.
+     - Method: GET. Response Format: **Text**.
+     - URL: `{{ $('Execute Workflow Trigger').first().json.url_instrucciones.replace('agentes/a3_propuesta.md', 'skills/cotizar-campana-dbs/SKILL.md').replace('agentes/a4_revisor.md', 'skills/revisar-propuesta-dbs/SKILL.md') }}`
+     - A1 y A2 no tienen skill: la URL queda igual y se relee su archivo (L01 lo ignora).
+3. **L01 Preparar llamada**: Code (`l01_preparar_llamada.js`). Lee los dos textos con `$('Leer instrucciones')` y `$('Leer skill')`, valida el skill y evalúa los controles del loop de seguridad y costo.
 4. **¿Permitido?**: IF con la condición `{{ $json.permitido }}` is true.
 5. Rama **true** → **Claude Messages API** (HTTP Request):
    - Method: POST. URL: `https://api.anthropic.com/v1/messages`.

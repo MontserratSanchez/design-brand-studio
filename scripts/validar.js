@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Controles previos al despliegue (los ejecuta GitHub Actions; deben poder fallar ante un error real).
 // 1) estructura de datos de referencia  2) dist/ sincronizado  3) pruebas de reglas y concatenación
-// 4) datos públicos sanitizados  5) archivos obligatorios  6) sin secretos en lo que se publica
+// 3b) skills completos y loop de seguridad y costo  4) datos públicos sanitizados  5) archivos obligatorios  6) sin secretos en lo que se publica
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
@@ -35,6 +35,7 @@ paso('Estructura de datos de referencia', () => {
 });
 paso('Nodos Code generados (dist/ = src/ + lib/)', () => execFileSync('node', [path.join(raiz, 'scripts/build_code_nodes.js'), '--check'], { stdio: 'pipe' }));
 paso('Pruebas de reglas deterministas', () => execFileSync('node', [path.join(raiz, 'tests/test_reglas.js')], { stdio: 'pipe' }));
+paso('Skills cargables y loop de seguridad y costo', () => execFileSync('node', [path.join(raiz, 'tests/test_skills.js')], { stdio: 'pipe' }));
 paso('Prueba de concatenación (mismo caso_id de punta a punta)', () => execFileSync('node', [path.join(raiz, 'tests/simular_flujo.js')], { stdio: 'pipe' }));
 paso('Datos públicos sanitizados', () => {
   const f = 'web/data/publico.json';
@@ -52,7 +53,7 @@ paso('Datos públicos sanitizados', () => {
   if (k.k2_tasa_aprobacion !== null && (k.k2_tasa_aprobacion < 0 || k.k2_tasa_aprobacion > 1)) throw new Error('K2 fuera de 0-1');
 });
 paso('Archivos obligatorios', () => {
-  ['README.md', '.env.example', 'web/index.html', 'agentes/contrato.schema.json', 'agentes/orquestador.md', 'agentes/a1_recepcion.md', 'agentes/a2_catalogo.md', 'agentes/a3_propuesta.md', 'agentes/a4_revisor.md', 'datos/politicas.md']
+  ['README.md', '.env.example', 'web/index.html', 'agentes/contrato.schema.json', 'agentes/orquestador.md', 'agentes/a1_recepcion.md', 'agentes/a2_catalogo.md', 'agentes/a3_propuesta.md', 'agentes/a4_revisor.md', 'datos/politicas.md', 'skills/cotizar-campana-dbs/SKILL.md', 'skills/revisar-propuesta-dbs/SKILL.md', 'loops/calidad_negocio.md', 'loops/seguridad_costo.md']
     .forEach(f => { if (!fs.existsSync(path.join(raiz, f))) throw new Error('falta ' + f); });
 });
 paso('Sin secretos en el repositorio', () => execFileSync('node', [path.join(raiz, 'scripts/revisar_secretos.js')], { stdio: 'pipe' }));

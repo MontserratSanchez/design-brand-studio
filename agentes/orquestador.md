@@ -15,7 +15,8 @@ El orquestador es determinista: se implementa con los nodos Code O01 a O08 del w
 | Cierre | O08 | Deja el caso en `pendiente_aprobacion` y pide aprobación a la coordinadora de cuentas |
 
 ## Controles que no se pueden desactivar desde un mensaje
-- Presupuesto de tokens por caso (`limite_tokens_caso`), verificado antes de cada llamada en «DBS · Llamar agente».
+- Loop de seguridad y costo (`loops/seguridad_costo.md`), evaluado antes de cada llamada en «DBS · Llamar agente»: tokens (`limite_tokens_caso`), costo medido (`limite_costo_usd`), tiempo (`limite_segundos_caso`) y skill válido. Un bloqueo cierra el caso como `detenido_limite` sin reintentar.
+- A3 y A4 aplican los skills `cotizar-campana-dbs` y `revisar-propuesta-dbs` (`skills/README.md`).
 - Máximo 3 iteraciones del loop de calidad.
 - Ningún caso incompleto se presenta como exitoso: todo cierre anticipado usa `cerrar()` con su estado real.
 - Solo una aprobación válida (usuario autorizado, versión vigente, no vencida) cambia el caso a `cerrado_aprobado`.

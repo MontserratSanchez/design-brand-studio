@@ -1,6 +1,9 @@
 // Nodo Code «L02 Procesar respuesta» · workflow «DBS · Llamar agente»
 // Entrada: respuesta del nodo HTTP «Claude Messages API» (con "Continue On Fail" activo) y el item de «L01 Preparar llamada».
 // Salida: {salida (contrato), fila_costo, fila_traza}. Nunca reporta costo 0 si la tarifa es desconocida.
+// La traza registra el skill aplicado (nombre@versión#huella) y los controles del loop de seguridad y costo.
+// Prueba controlada del loop de calidad: si O01 tiene CONFIG.inyectar_falla_v1 = true, la versión 1 de A3 se
+// altera aquí (sin rótulo y con una promesa) para demostrar V1 fallida → V2 corregida. Queda marcada en la traza.
 const prep = $('L01 Preparar llamada').first().json;
 const trig = $('Execute Workflow Trigger').first().json;
 const r = $input.first().json;
@@ -34,6 +37,14 @@ if (r.error || !Array.isArray(r.content)) {
     resultado = { texto_crudo: limpio.slice(0, 500) };
   }
   if (r.stop_reason === 'max_tokens') advertencias.push('Respuesta truncada por max_tokens');
+}
+const iteracion = (trig.entrada && trig.entrada.iteracion) || 1;
+const cfg = (trig.ctx && trig.ctx.config) || {};
+let fallaInyectada = false;
+if (cfg.inyectar_falla_v1 === true && prep.agente === 'a3_propuesta' && iteracion === 1 && estado === 'ok' && typeof resultado.texto_propuesta === 'string') {
+  resultado.texto_propuesta = resultado.texto_propuesta.replace(/RESULTADO SIMULADO\.?/g, '').trim() + ' Garantizamos duplicar sus ventas.';
+  advertencias.push('FALLA INYECTADA DE PRUEBA en V1 (CONFIG.inyectar_falla_v1)');
+  fallaInyectada = true;
 }
 
 const tin = Number(usage.input_tokens) || 0;
@@ -83,10 +94,18 @@ const fila_traza = {
   caso_id: prep.caso_id,
   tipo: 'llamada_agente',
   agente: prep.agente,
-  iteracion: (trig.entrada && trig.entrada.iteracion) || 1,
+  iteracion,
   estado,
-  detalle: JSON.stringify({ advertencias, claves_resultado: Object.keys(resultado) }).slice(0, 1000),
+  detalle: JSON.stringify({
+    skill: prep.skill ? prep.skill.nombre + '@' + prep.skill.version + '#' + prep.skill.huella : 'no_aplica',
+    controles: (prep.controles || []).map(c => c.control + (c.ok ? ':ok' : ':FALLA')).join(','),
+    falla_inyectada: fallaInyectada,
+    advertencias,
+    claves_resultado: Object.keys(resultado),
+  }).slice(0, 1000),
   llamada_id: prep.llamada_id,
 };
-// ctx viaja intacto de ida y vuelta para que el orquestador no dependa de referencias entre ejecuciones
-return [{ json: { salida, fila_costo, fila_traza, tokens_usados: tin + tout, ctx: trig.ctx } }];
+// ctx viaja de ida y vuelta para que el orquestador no dependa de referencias entre ejecuciones
+// Loop de seguridad y costo → REGISTRAR consumo: el costo medido se acumula en ctx para la siguiente evaluación
+const ctx = trig.ctx ? Object.assign({}, trig.ctx, { consumo_usd: Math.round(((Number(trig.ctx.consumo_usd) || 0) + (costo || 0)) * 1e8) / 1e8 }) : trig.ctx;
+return [{ json: { salida, fila_costo, fila_traza, tokens_usados: tin + tout, ctx } }];

@@ -10,7 +10,7 @@ if (item.salida && item.salida.agente === 'a4_revisor') {
     correccionesModelo = Array.isArray(abs.salida.resultado.correcciones) ? abs.salida.resultado.correcciones : [];
   } else {
     veredictoModelo = 'devuelto';
-    correccionesModelo = ['A4 no entregó una salida válida'];
+    correccionesModelo = ['A4 no entregó una salida válida: ' + (abs.salida.advertencias || []).join('; ')];
   }
 } else {
   ctx = JSON.parse(JSON.stringify(item.ctx));
@@ -22,6 +22,11 @@ ctx.historial.push({ ts: new Date().toISOString(), paso: 'decision_loop', estado
 if (aprobado) {
   ctx.version = ctx.iteracion;
   return [{ json: { siguiente: 'aprobacion', ctx } }];
+}
+// Loop de seguridad y costo: si un guardrail bloqueó la llamada (tokens, costo, tiempo o skill), se detiene ya
+const bloqueos = correcciones.filter(c => /Guardrail:/.test(c));
+if (bloqueos.length) {
+  return [{ json: cerrar(ctx, 'detenido_limite', bloqueos.join('; '), 'Tu caso se detuvo por un límite de operación. Una persona lo revisará.') }];
 }
 // Reglas que una nueva redacción no puede arreglar: se detiene sin gastar más llamadas
 const estructurales = correcciones.filter(c => /^R[367]:/.test(c));

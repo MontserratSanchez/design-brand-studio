@@ -27,8 +27,10 @@ Voz ──────┘        (herramienta autenticada)                      
 agentes/      contrato.schema.json + instrucciones del orquestador y de A1–A4
 datos/        catálogo de servicios, industrias, capacidad del equipo (ficticios) y políticas
 docs/         caso de negocio, prueba de concatenación
-lib/          reglas deterministas compartidas (R1–R9, cálculo, revisión, aprobación, exportación)
+lib/          reglas deterministas compartidas (R1–R9, cálculo, revisión, aprobación, exportación, adaptador de skills, loop de seguridad)
+loops/        loop de calidad de negocio y loop de seguridad y costo (criterios, límites, retorno, autoevaluación)
 n8n/code/     src/ (lógica de cada nodo Code) y dist/ (lo que se pega en n8n)
+skills/       cotizar-campana-dbs (A3) y revisar-propuesta-dbs (A4), cargados en tiempo de ejecución por W3
 scripts/      build de nodos, validación previa al despliegue, revisión de secretos
 tests/        pruebas de reglas y simulación de punta a punta
 web/          index.html y data/publico.json (exportación sanitizada)
@@ -42,7 +44,8 @@ Requiere Node.js 18 o superior.
 
 ```bash
 node scripts/build_code_nodes.js     # genera n8n/code/dist/
-node tests/test_reglas.js            # 20 pruebas de reglas
+node tests/test_reglas.js            # 21 pruebas de reglas
+node tests/test_skills.js            # 17 pruebas de skills y del loop de seguridad y costo
 node tests/simular_flujo.js          # concatenación completa con un mismo caso_id
 node scripts/validar.js              # los mismos controles que corre GitHub Actions
 ```
@@ -113,7 +116,8 @@ En W5, el nodo GitHub escribe `web/data/publico.json` una vez al día. Ese commi
 | Deduplicación de eventos de Telegram | W1 «¿Evento nuevo?» + tabla `eventos` |
 | Bloqueo de inyección de instrucciones | `detectarInyeccion` en T02 y V01 |
 | Validación determinista de campos y políticas | O02, O04, O06 (`lib/reglas.js`) |
-| Presupuesto de tokens antes de cada llamada | L01 (`limite_tokens_caso`) |
+| Loop de seguridad y costo antes de cada llamada: tokens, costo medido, tiempo y skill válido | L01 · `evaluarPaso` → L05 → O07 |
+| Skills de negocio y de calidad cargados y registrados en la traza | Leer skill + L01 · `parsearSkill` |
 | Reintentos acotados y error controlado | Nodo HTTP (2 intentos, 30 s) + L02 |
 | Loop de calidad con máximo 3 iteraciones | O07 |
 | Aprobación ligada a usuario, folio, versión y vencimiento de 24 h | T04 + W5 |
@@ -121,7 +125,7 @@ En W5, el nodo GitHub escribe `web/data/publico.json` una vez al día. Ese commi
 
 ## Pendiente en hitos posteriores
 
-- Skills y loops como archivos `skills/*/SKILL.md` cargados por el adaptador.
+- Evidencia en n8n de los skills y loops (P09, P11 y un segundo caso).
 - Diseño final del panel con VizData.
 - Registro de tarifas con fuente y fecha (`costos/tarifas.csv`).
 - Matriz `tests/pruebas.csv`.

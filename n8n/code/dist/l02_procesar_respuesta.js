@@ -243,6 +243,15 @@ function calcularPropuesta(req, datos) {
   };
 }
 
+// Detecta promesas de resultados, ignorando las frases que NIEGAN la garantía
+// ("no se garantizan resultados", "no garantizamos ventas", "sin garantía de alcance").
+function prometeResultados(texto) {
+  const sinNegaciones = String(texto || '')
+    .replace(/\b(no|ni|sin)\s+(se\s+|le\s+|les\s+|podemos\s+)?(garantiz\w*|asegur\w*|promet\w*)[^.;!?]*/gi, ' ')
+    .replace(/\bsin\s+garant[ií]a[^.;!?]*/gi, ' ');
+  return /\b(garantiz\w*|aseguramos|aseguran|te\s+aseguro|prometemos|resultados\s+garantizados|[ée]xito\s+(asegurado|garantizado))\b/i.test(sinNegaciones);
+}
+
 // A4 · revisión determinista: recalcula y compara (el modelo revisa redacción, promesas y política)
 function revisarPropuesta(req, datos, propuesta, textoPropuesta) {
   const correcciones = [];
@@ -259,7 +268,7 @@ function revisarPropuesta(req, datos, propuesta, textoPropuesta) {
     if (!texto.includes('RESULTADO SIMULADO')) correcciones.push('Texto: falta el rótulo RESULTADO SIMULADO');
     const totalTxt = esperado.desglose.total.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     if (!texto.includes(totalTxt) && !texto.includes(esperado.desglose.total.toFixed(2))) correcciones.push('Texto: el total ' + totalTxt + ' no aparece o no coincide con el cálculo');
-    if (/garantiza|asegura(mos)?\s+(ventas|resultados|seguidores)|resultados\s+garantizados/i.test(texto)) correcciones.push('Texto: promete resultados garantizados');
+    if (prometeResultados(texto)) correcciones.push('Texto: promete resultados garantizados');
   } else {
     correcciones.push('Texto: la propuesta redactada está vacía');
   }
@@ -310,11 +319,80 @@ function exportarSanitizado(casos, costos, ahoraISO) {
     casos: filas,
   };
 }
+
+// ===== Skills: adaptador de carga (n8n no tiene carga nativa de skills) =====
+// El nodo «Leer skill» descarga skills/<nombre>/SKILL.md y L01 lo valida y lo antepone a las instrucciones.
+const SKILLS_POR_AGENTE = { a3_propuesta: 'cotizar-campana-dbs', a4_revisor: 'revisar-propuesta-dbs' };
+const SECCIONES_SKILL = ['Activador', 'Objetivo', 'Entradas', 'Fuentes permitidas', 'Pasos', 'Herramientas permitidas', 'Límites', 'Salidas', 'Errores', 'Criterios de aceptación', 'Ejemplos', 'Historial de versiones'];
+
+// Huella corta (djb2) para dejar en la traza qué versión exacta del archivo se aplicó
+function huellaTexto(texto) {
+  let h = 5381;
+  const s = String(texto || '');
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h.toString(16).padStart(8, '0');
+}
+
+function parsearSkill(texto, agente) {
+  const esperado = SKILLS_POR_AGENTE[agente] || null;
+  if (!esperado) return { requerido: false, ok: true };
+  const t = String(texto || '').replace(/\r\n/g, '\n');
+  const m = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(t);
+  const r = { requerido: true, ok: false, esperado, nombre: null, version: null, huella: huellaTexto(t), cuerpo: '', motivo: null };
+  if (!m) { r.motivo = 'skill sin encabezado (frontmatter)'; return r; }
+  const meta = {};
+  m[1].split('\n').forEach(l => { const p = l.indexOf(':'); if (p > 0) meta[l.slice(0, p).trim()] = l.slice(p + 1).trim(); });
+  r.nombre = meta.name || null;
+  r.version = meta.version || null;
+  r.cuerpo = m[2].trim();
+  const faltan = SECCIONES_SKILL.filter(s => !new RegExp('^## ' + s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'm').test(r.cuerpo));
+  if (r.nombre !== esperado) r.motivo = 'skill incorrecto: se esperaba ' + esperado + ' y llegó ' + r.nombre;
+  else if (meta.agente !== agente) r.motivo = 'el skill no está autorizado para ' + agente;
+  else if (!/^\d+\.\d+\.\d+$/.test(r.version || '')) r.motivo = 'skill sin versión válida';
+  else if (faltan.length) r.motivo = 'skill incompleto, faltan secciones: ' + faltan.join(', ');
+  else r.ok = true;
+  return r;
+}
+
+// ===== Loop de seguridad y costo: evaluar permisos y presupuesto ANTES de cada llamada =====
+const AGENTES_PERMITIDOS = ['a1_recepcion', 'a2_catalogo', 'a3_propuesta', 'a4_revisor'];
+function evaluarPaso(p) {
+  const controles = [];
+  const c = (control, ok, detalle) => controles.push({ control, ok, detalle });
+  c('agente_permitido', AGENTES_PERMITIDOS.includes(p.agente), p.agente);
+  c('caso_id_valido', esCasoId(p.caso_id), p.caso_id || 'vacío');
+  c('instrucciones_cargadas', String(p.instrucciones || '').length >= 200, (String(p.instrucciones || '').length) + ' caracteres');
+  if (p.skill && p.skill.requerido) c('skill_cargado', p.skill.ok, p.skill.ok ? p.skill.nombre + '@' + p.skill.version + '#' + p.skill.huella : p.skill.motivo);
+  const consumo = Number(p.consumo_tokens) || 0;
+  const reserva = (Number(p.tokens_estimados_entrada) || 0) + (Number(p.max_tokens) || 0);
+  const limite = Number(p.limite_tokens) || 25000;
+  c('presupuesto_tokens', consumo + reserva <= limite, consumo + ' usados + ' + reserva + ' reservados de ' + limite);
+  const pin = Number(p.tarifa_entrada), pout = Number(p.tarifa_salida);
+  if (p.tarifa_entrada != null && p.tarifa_entrada !== '' && p.tarifa_salida != null && p.tarifa_salida !== '' && Number(p.limite_costo_usd) > 0) {
+    // costo real acumulado del caso (medido en L02) + costo estimado de esta llamada con max_tokens reservados
+    const acumulado = Number(p.consumo_usd) || 0;
+    const estimado = ((Number(p.tokens_estimados_entrada) || 0) * pin + (Number(p.max_tokens) || 0) * pout) / 1e6;
+    const total = Math.round((acumulado + estimado) * 1e6) / 1e6;
+    c('presupuesto_costo', total <= Number(p.limite_costo_usd), acumulado.toFixed(6) + ' USD medidos + ' + estimado.toFixed(6) + ' reservados de ' + p.limite_costo_usd);
+  } else {
+    controles.push({ control: 'presupuesto_costo', ok: true, detalle: 'tarifa no registrada: solo aplica el límite de tokens' });
+  }
+  if (p.ts_solicitud) {
+    const seg = Math.round((Date.parse(p.ahora) - Date.parse(p.ts_solicitud)) / 1000);
+    const lim = Number(p.limite_segundos) || 300;
+    c('tiempo_caso', !(seg > lim), seg + ' s de ' + lim + ' s');
+  }
+  const fallo = controles.find(x => !x.ok);
+  return { permitido: !fallo, motivo: fallo ? fallo.control + ': ' + fallo.detalle : null, controles };
+}
 // ===== fin reglas.js =====
 
 // Nodo Code «L02 Procesar respuesta» · workflow «DBS · Llamar agente»
 // Entrada: respuesta del nodo HTTP «Claude Messages API» (con "Continue On Fail" activo) y el item de «L01 Preparar llamada».
 // Salida: {salida (contrato), fila_costo, fila_traza}. Nunca reporta costo 0 si la tarifa es desconocida.
+// La traza registra el skill aplicado (nombre@versión#huella) y los controles del loop de seguridad y costo.
+// Prueba controlada del loop de calidad: si O01 tiene CONFIG.inyectar_falla_v1 = true, la versión 1 de A3 se
+// altera aquí (sin rótulo y con una promesa) para demostrar V1 fallida → V2 corregida. Queda marcada en la traza.
 const prep = $('L01 Preparar llamada').first().json;
 const trig = $('Execute Workflow Trigger').first().json;
 const r = $input.first().json;
@@ -348,6 +426,14 @@ if (r.error || !Array.isArray(r.content)) {
     resultado = { texto_crudo: limpio.slice(0, 500) };
   }
   if (r.stop_reason === 'max_tokens') advertencias.push('Respuesta truncada por max_tokens');
+}
+const iteracion = (trig.entrada && trig.entrada.iteracion) || 1;
+const cfg = (trig.ctx && trig.ctx.config) || {};
+let fallaInyectada = false;
+if (cfg.inyectar_falla_v1 === true && prep.agente === 'a3_propuesta' && iteracion === 1 && estado === 'ok' && typeof resultado.texto_propuesta === 'string') {
+  resultado.texto_propuesta = resultado.texto_propuesta.replace(/RESULTADO SIMULADO\.?/g, '').trim() + ' Garantizamos duplicar sus ventas.';
+  advertencias.push('FALLA INYECTADA DE PRUEBA en V1 (CONFIG.inyectar_falla_v1)');
+  fallaInyectada = true;
 }
 
 const tin = Number(usage.input_tokens) || 0;
@@ -397,10 +483,18 @@ const fila_traza = {
   caso_id: prep.caso_id,
   tipo: 'llamada_agente',
   agente: prep.agente,
-  iteracion: (trig.entrada && trig.entrada.iteracion) || 1,
+  iteracion,
   estado,
-  detalle: JSON.stringify({ advertencias, claves_resultado: Object.keys(resultado) }).slice(0, 1000),
+  detalle: JSON.stringify({
+    skill: prep.skill ? prep.skill.nombre + '@' + prep.skill.version + '#' + prep.skill.huella : 'no_aplica',
+    controles: (prep.controles || []).map(c => c.control + (c.ok ? ':ok' : ':FALLA')).join(','),
+    falla_inyectada: fallaInyectada,
+    advertencias,
+    claves_resultado: Object.keys(resultado),
+  }).slice(0, 1000),
   llamada_id: prep.llamada_id,
 };
-// ctx viaja intacto de ida y vuelta para que el orquestador no dependa de referencias entre ejecuciones
-return [{ json: { salida, fila_costo, fila_traza, tokens_usados: tin + tout, ctx: trig.ctx } }];
+// ctx viaja de ida y vuelta para que el orquestador no dependa de referencias entre ejecuciones
+// Loop de seguridad y costo → REGISTRAR consumo: el costo medido se acumula en ctx para la siguiente evaluación
+const ctx = trig.ctx ? Object.assign({}, trig.ctx, { consumo_usd: Math.round(((Number(trig.ctx.consumo_usd) || 0) + (costo || 0)) * 1e8) / 1e8 }) : trig.ctx;
+return [{ json: { salida, fila_costo, fila_traza, tokens_usados: tin + tout, ctx } }];

@@ -7,9 +7,11 @@ const CONFIG = {
   tarifa_salida_usd_mtok: null,        // null = costo desconocido (no se reporta 0)
   limite_tokens_caso: 25000,           // supuesto inicial; ajustar con la primera medición
   limite_costo_usd: 0.05,              // supuesto inicial por caso
-  max_tokens: { a1_recepcion: 700, a2_catalogo: 600, a3_propuesta: 900, a4_revisor: 600 },
-  url_instrucciones: 'https://raw.githubusercontent.com/USUARIO/REPO/main/agentes/',
+  max_tokens: { a1_recepcion: 1200, a2_catalogo: 900, a3_propuesta: 1400, a4_revisor: 900 },
+  url_instrucciones: 'https://raw.githubusercontent.com/MontserratSanchez/design-brand-studio/main/agentes/',
   limite_iteraciones_loop: 3,
+  limite_segundos_caso: 300,           // loop de seguridad y costo: tiempo máximo del caso antes de nuevas llamadas
+  inyectar_falla_v1: false,            // SOLO para la prueba P11: true altera la V1 de A3 para demostrar V1 → V2
 };
 // Entrada de este nodo: filas de «Buscar coordinadora» (tabla usuarios, rol = coordinadora)
 const e = $('Execute Workflow Trigger').first().json;
