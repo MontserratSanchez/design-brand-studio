@@ -1,0 +1,1434 @@
+{
+ "name": "DBS · Procesar caso (orquestador)",
+ "nodes": [
+  {
+   "name": "Execute Workflow Trigger",
+   "type": "n8n-nodes-base.executeWorkflowTrigger",
+   "typeVersion": 1.1,
+   "position": [
+    0,
+    192
+   ],
+   "parameters": {
+    "inputSource": "passthrough"
+   }
+  },
+  {
+   "name": "Buscar coordinadora",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    272,
+    320
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "baZ6g9sRsm1FK6AP",
+     "cachedResultName": "usuarios"
+    },
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "rol",
+       "keyValue": "coordinadora"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "O01 Plan",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    496,
+    320
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o01@@"
+   }
+  },
+  {
+   "name": "Llamar A1",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    720,
+    320
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "P8RaK9WBoejyARHw",
+     "cachedResultName": "DBS · Llamar agente"
+    },
+    "options": {
+     "waitForSubWorkflow": true
+    }
+   }
+  },
+  {
+   "name": "O02 Validar A1",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    944,
+    320
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o02@@"
+   }
+  },
+  {
+   "name": "¿Sigue a A2?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    1168,
+    320
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "strict",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $json.siguiente }}",
+       "rightValue": "a2",
+       "operator": {
+        "type": "string",
+        "operation": "equals"
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Leer catálogo",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    800,
+    240
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "dS3Jw8QOuRuE2G9n",
+     "cachedResultName": "catalogo servicios"
+    },
+    "returnAll": true
+   },
+   "executeOnce": true
+  },
+  {
+   "name": "O09 Cierre",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1856,
+    368
+   ],
+   "parameters": {
+    "jsCode": "return $input.all();"
+   }
+  },
+  {
+   "name": "Leer industrias",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1024,
+    240
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "010PPZ1TTZUa9TBn",
+     "cachedResultName": "industrias"
+    },
+    "returnAll": true
+   },
+   "executeOnce": true
+  },
+  {
+   "name": "Leer capacidad",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1248,
+    240
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "98tw2orNZQARYkeT",
+     "cachedResultName": "capacidad equipo"
+    },
+    "returnAll": true
+   },
+   "executeOnce": true
+  },
+  {
+   "name": "O03 Recuperar A2",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1472,
+    240
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o03@@"
+   },
+   "executeOnce": true
+  },
+  {
+   "name": "Llamar A2",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    1696,
+    240
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "P8RaK9WBoejyARHw",
+     "cachedResultName": "DBS · Llamar agente"
+    },
+    "options": {
+     "waitForSubWorkflow": true
+    }
+   }
+  },
+  {
+   "name": "O04 Integrar A2",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1920,
+    240
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o04@@"
+   }
+  },
+  {
+   "name": "¿Sigue a A3?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    2144,
+    240
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "strict",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $json.siguiente }}",
+       "rightValue": "a3",
+       "operator": {
+        "type": "string",
+        "operation": "equals"
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "O05 Calcular A3",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1328,
+    320
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o05@@"
+   }
+  },
+  {
+   "name": "Llamar A3",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    1552,
+    256
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "P8RaK9WBoejyARHw",
+     "cachedResultName": "DBS · Llamar agente"
+    },
+    "options": {
+     "waitForSubWorkflow": true
+    }
+   }
+  },
+  {
+   "name": "O06 Preparar A4",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1776,
+    256
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o06@@"
+   }
+  },
+  {
+   "name": "¿Llamar A4?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    2000,
+    256
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "strict",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $json.siguiente }}",
+       "rightValue": "a4",
+       "operator": {
+        "type": "string",
+        "operation": "equals"
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Llamar A4",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    2224,
+    176
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "P8RaK9WBoejyARHw",
+     "cachedResultName": "DBS · Llamar agente"
+    },
+    "options": {
+     "waitForSubWorkflow": true
+    }
+   }
+  },
+  {
+   "name": "O07 Decidir",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2448,
+    256
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o07@@"
+   }
+  },
+  {
+   "name": "Ruta decisión",
+   "type": "n8n-nodes-base.switch",
+   "typeVersion": 3.2,
+   "position": [
+    2672,
+    304
+   ],
+   "parameters": {
+    "rules": {
+     "values": [
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.siguiente }}",
+          "rightValue": "reintentar",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "reintentar"
+      },
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.siguiente }}",
+          "rightValue": "aprobacion",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "aprobacion"
+      },
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.siguiente }}",
+          "rightValue": "cerrar",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "cerrar"
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "O08 Preparar aprobación",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1856,
+    128
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:o08@@"
+   }
+  },
+  {
+   "name": "Guardar propuesta",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    2080,
+    128
+   ],
+   "parameters": {
+    "operation": "update",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "matchType": "allConditions",
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "caso_id",
+       "keyValue": "={{ $json.actualizacion_caso.caso_id }}"
+      }
+     ]
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "estado": "={{ $json.actualizacion_caso.estado }}",
+      "version": "={{ $json.actualizacion_caso.version }}",
+      "total_mxn": "={{ $json.actualizacion_caso.total_mxn }}",
+      "margen": "={{ $json.actualizacion_caso.margen }}",
+      "propuesta_json": "={{ $json.actualizacion_caso.propuesta_json }}",
+      "aprobacion_expira": "={{ $json.actualizacion_caso.aprobacion_expira }}",
+      "ts_propuesta_lista": "={{ $json.actualizacion_caso.ts_propuesta_lista }}",
+      "consumo_tokens": "={{ $json.actualizacion_caso.consumo_tokens }}",
+      "tipo_campana": "={{ $json.actualizacion_caso.tipo_campana }}",
+      "duracion_semanas": "={{ $json.actualizacion_caso.duracion_semanas }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "version",
+       "displayName": "version",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "total_mxn",
+       "displayName": "total_mxn",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "margen",
+       "displayName": "margen",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "propuesta_json",
+       "displayName": "propuesta_json",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "aprobacion_expira",
+       "displayName": "aprobacion_expira",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "ts_propuesta_lista",
+       "displayName": "ts_propuesta_lista",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "consumo_tokens",
+       "displayName": "consumo_tokens",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "tipo_campana",
+       "displayName": "tipo_campana",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "duracion_semanas",
+       "displayName": "duracion_semanas",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Traza aprobación",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    2304,
+    128
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "Pg5AFXdN8EmEuN15",
+     "cachedResultName": "trazas"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "ts": "={{ $('O08 Preparar aprobación').first().json.traza.ts }}",
+      "caso_id": "={{ $('O08 Preparar aprobación').first().json.traza.caso_id }}",
+      "tipo": "={{ $('O08 Preparar aprobación').first().json.traza.tipo }}",
+      "agente": "={{ $('O08 Preparar aprobación').first().json.traza.agente }}",
+      "estado": "={{ $('O08 Preparar aprobación').first().json.traza.estado }}",
+      "detalle": "={{ $('O08 Preparar aprobación').first().json.traza.detalle }}",
+      "llamada_id": "={{ $('O08 Preparar aprobación').first().json.traza.llamada_id }}",
+      "iteracion": "={{ $('O08 Preparar aprobación').first().json.traza.iteracion }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "tipo",
+       "displayName": "tipo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "detalle",
+       "displayName": "detalle",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "iteracion",
+       "displayName": "iteracion",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Pedir aprobación",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2528,
+    128
+   ],
+   "parameters": {
+    "chatId": "={{ $('O08 Preparar aprobación').first().json.mensaje_coordinadora.chat_id }}",
+    "text": "={{ String($('O08 Preparar aprobación').first().json.mensaje_coordinadora.texto).replace(/([_*`\\[])/g, '\\\\$1') }}",
+    "replyMarkup": "inlineKeyboard",
+    "inlineKeyboard": {
+     "rows": [
+      {
+       "row": {
+        "buttons": [
+         {
+          "text": "Aprobar",
+          "additionalFields": {
+           "callback_data": "={{ $('O08 Preparar aprobación').first().json.callback_aprobar }}"
+          }
+         },
+         {
+          "text": "Rechazar",
+          "additionalFields": {
+           "callback_data": "={{ $('O08 Preparar aprobación').first().json.callback_rechazar }}"
+          }
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "¿Avisar solicitante?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    2752,
+    128
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $('O08 Preparar aprobación').first().json.aviso_solicitante.chat_id }}",
+       "rightValue": "",
+       "operator": {
+        "type": "string",
+        "operation": "notEmpty",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   }
+  },
+  {
+   "name": "Avisar solicitante",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2976,
+    128
+   ],
+   "parameters": {
+    "chatId": "={{ $('O08 Preparar aprobación').first().json.aviso_solicitante.chat_id }}",
+    "text": "={{ String($('O08 Preparar aprobación').first().json.aviso_solicitante.texto).replace(/([_*`\\[])/g, '\\\\$1') }}",
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "Cerrar caso",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    2080,
+    368
+   ],
+   "parameters": {
+    "operation": "update",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "matchType": "allConditions",
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "caso_id",
+       "keyValue": "={{ $('O09 Cierre').first().json.actualizacion_caso.caso_id }}"
+      }
+     ]
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "estado": "={{ $('O09 Cierre').first().json.actualizacion_caso.estado }}",
+      "motivo": "={{ $('O09 Cierre').first().json.actualizacion_caso.motivo }}",
+      "ts_cierre": "={{ $('O09 Cierre').first().json.actualizacion_caso.ts_cierre }}",
+      "consumo_tokens": "={{ $('O09 Cierre').first().json.actualizacion_caso.consumo_tokens }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "motivo",
+       "displayName": "motivo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "ts_cierre",
+       "displayName": "ts_cierre",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "consumo_tokens",
+       "displayName": "consumo_tokens",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Traza cierre",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    2304,
+    368
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "Pg5AFXdN8EmEuN15",
+     "cachedResultName": "trazas"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "ts": "={{ $('O09 Cierre').first().json.traza.ts }}",
+      "caso_id": "={{ $('O09 Cierre').first().json.traza.caso_id }}",
+      "tipo": "={{ $('O09 Cierre').first().json.traza.tipo }}",
+      "agente": "={{ $('O09 Cierre').first().json.traza.agente }}",
+      "estado": "={{ $('O09 Cierre').first().json.traza.estado }}",
+      "detalle": "={{ $('O09 Cierre').first().json.traza.detalle }}",
+      "llamada_id": "={{ $('O09 Cierre').first().json.traza.llamada_id }}",
+      "iteracion": "={{ $('O09 Cierre').first().json.traza.iteracion }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "tipo",
+       "displayName": "tipo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "detalle",
+       "displayName": "detalle",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "iteracion",
+       "displayName": "iteracion",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "¿Avisar cierre?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    2528,
+    368
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $('O09 Cierre').first().json.aviso_solicitante.chat_id }}",
+       "rightValue": "",
+       "operator": {
+        "type": "string",
+        "operation": "notEmpty",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   }
+  },
+  {
+   "name": "Avisar cierre",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2752,
+    368
+   ],
+   "parameters": {
+    "chatId": "={{ $('O09 Cierre').first().json.aviso_solicitante.chat_id }}",
+    "text": "={{ String($('O09 Cierre').first().json.aviso_solicitante.texto).replace(/([_*`\\[])/g, '\\\\$1') }}",
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "Actualizar panel",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    2304,
+    320
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "g2TzYbKxFdidIO6e",
+     "cachedResultName": "DBS · Exportación a Pages"
+    },
+    "options": {
+     "waitForSubWorkflow": false
+    }
+   },
+   "onError": "continueRegularOutput"
+  }
+ ],
+ "connections": {
+  "Execute Workflow Trigger": {
+   "main": [
+    [
+     {
+      "node": "Buscar coordinadora",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Buscar coordinadora": {
+   "main": [
+    [
+     {
+      "node": "O01 Plan",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O01 Plan": {
+   "main": [
+    [
+     {
+      "node": "Llamar A1",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Llamar A1": {
+   "main": [
+    [
+     {
+      "node": "O02 Validar A1",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O02 Validar A1": {
+   "main": [
+    [
+     {
+      "node": "¿Sigue a A2?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Sigue a A2?": {
+   "main": [
+    [
+     {
+      "node": "Leer catálogo",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "O09 Cierre",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer catálogo": {
+   "main": [
+    [
+     {
+      "node": "Leer industrias",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O09 Cierre": {
+   "main": [
+    [
+     {
+      "node": "Cerrar caso",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer industrias": {
+   "main": [
+    [
+     {
+      "node": "Leer capacidad",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer capacidad": {
+   "main": [
+    [
+     {
+      "node": "O03 Recuperar A2",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O03 Recuperar A2": {
+   "main": [
+    [
+     {
+      "node": "Llamar A2",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Llamar A2": {
+   "main": [
+    [
+     {
+      "node": "O04 Integrar A2",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O04 Integrar A2": {
+   "main": [
+    [
+     {
+      "node": "¿Sigue a A3?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Sigue a A3?": {
+   "main": [
+    [
+     {
+      "node": "O05 Calcular A3",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "O09 Cierre",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O05 Calcular A3": {
+   "main": [
+    [
+     {
+      "node": "Llamar A3",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Llamar A3": {
+   "main": [
+    [
+     {
+      "node": "O06 Preparar A4",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O06 Preparar A4": {
+   "main": [
+    [
+     {
+      "node": "¿Llamar A4?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Llamar A4?": {
+   "main": [
+    [
+     {
+      "node": "Llamar A4",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "O07 Decidir",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Llamar A4": {
+   "main": [
+    [
+     {
+      "node": "O07 Decidir",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O07 Decidir": {
+   "main": [
+    [
+     {
+      "node": "Ruta decisión",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Ruta decisión": {
+   "main": [
+    [
+     {
+      "node": "O05 Calcular A3",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "O08 Preparar aprobación",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "O09 Cierre",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "O08 Preparar aprobación": {
+   "main": [
+    [
+     {
+      "node": "Guardar propuesta",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Guardar propuesta": {
+   "main": [
+    [
+     {
+      "node": "Actualizar panel",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Traza aprobación",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Traza aprobación": {
+   "main": [
+    [
+     {
+      "node": "Pedir aprobación",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Pedir aprobación": {
+   "main": [
+    [
+     {
+      "node": "¿Avisar solicitante?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Avisar solicitante?": {
+   "main": [
+    [
+     {
+      "node": "Avisar solicitante",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Cerrar caso": {
+   "main": [
+    [
+     {
+      "node": "Traza cierre",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Traza cierre": {
+   "main": [
+    [
+     {
+      "node": "¿Avisar cierre?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Avisar cierre?": {
+   "main": [
+    [
+     {
+      "node": "Avisar cierre",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1"
+ }
+}

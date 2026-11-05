@@ -1,0 +1,900 @@
+{
+ "name": "DBS · Llamar agente",
+ "nodes": [
+  {
+   "name": "Execute Workflow Trigger",
+   "type": "n8n-nodes-base.executeWorkflowTrigger",
+   "typeVersion": 1.3,
+   "position": [
+    -96,
+    16
+   ],
+   "parameters": {
+    "inputSource": "passthrough"
+   }
+  },
+  {
+   "name": "Leer instrucciones",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.5,
+   "position": [
+    192,
+    144
+   ],
+   "parameters": {
+    "url": "={{ $json.url_instrucciones }}",
+    "options": {
+     "response": {
+      "response": {
+       "responseFormat": "text"
+      }
+     }
+    }
+   }
+  },
+  {
+   "name": "L01 Preparar llamada",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    480,
+    144
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:l01@@"
+   }
+  },
+  {
+   "name": "¿Permitido?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    640,
+    144
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "strict",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "permitido-true",
+       "leftValue": "={{ $json.permitido }}",
+       "rightValue": "",
+       "operator": {
+        "type": "boolean",
+        "operation": "true",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Claude Messages API",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.5,
+   "position": [
+    720,
+    48
+   ],
+   "parameters": {
+    "method": "POST",
+    "url": "https://api.anthropic.com/v1/messages",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "anthropic-version",
+       "value": "2023-06-01"
+      },
+      {
+       "name": "content-type",
+       "value": "application/json"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify($json.body) }}",
+    "options": {
+     "timeout": 30000
+    }
+   },
+   "credentials": {
+    "httpHeaderAuth": {
+     "name": "DBS Anthropic"
+    }
+   },
+   "onError": "continueRegularOutput",
+   "retryOnFail": true,
+   "maxTries": 2,
+   "waitBetweenTries": 2000
+  },
+  {
+   "name": "L02 Procesar respuesta",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    944,
+    48
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:l02@@"
+   }
+  },
+  {
+   "name": "Guardar costo",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1168,
+    48
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "dBjrjXNAD1NABq9c",
+     "cachedResultName": "costos"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "fecha_hora": "={{ $json.fila_costo.fecha_hora }}",
+      "caso_id": "={{ $json.fila_costo.caso_id }}",
+      "llamada_id": "={{ $json.fila_costo.llamada_id }}",
+      "etapa": "={{ $json.fila_costo.etapa }}",
+      "agente": "={{ $json.fila_costo.agente }}",
+      "proveedor": "={{ $json.fila_costo.proveedor }}",
+      "modelo": "={{ $json.fila_costo.modelo }}",
+      "unidad_cobro": "={{ $json.fila_costo.unidad_cobro }}",
+      "moneda": "={{ $json.fila_costo.moneda }}",
+      "estado": "={{ $json.fila_costo.estado }}",
+      "origen": "={{ $json.fila_costo.origen }}",
+      "tokens_entrada": "={{ $json.fila_costo.tokens_entrada }}",
+      "tokens_salida": "={{ $json.fila_costo.tokens_salida }}",
+      "tokens_cache_lectura": "={{ $json.fila_costo.tokens_cache_lectura }}",
+      "tokens_cache_escritura": "={{ $json.fila_costo.tokens_cache_escritura }}",
+      "tarifa_entrada": "={{ $json.fila_costo.tarifa_entrada }}",
+      "tarifa_salida": "={{ $json.fila_costo.tarifa_salida }}",
+      "costo_usd": "={{ $json.fila_costo.costo_usd }}",
+      "reintento": "={{ $json.fila_costo.reintento }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "fecha_hora",
+       "displayName": "fecha_hora",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "etapa",
+       "displayName": "etapa",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "proveedor",
+       "displayName": "proveedor",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "modelo",
+       "displayName": "modelo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "unidad_cobro",
+       "displayName": "unidad_cobro",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "moneda",
+       "displayName": "moneda",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "origen",
+       "displayName": "origen",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tokens_entrada",
+       "displayName": "tokens_entrada",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tokens_salida",
+       "displayName": "tokens_salida",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tokens_cache_lectura",
+       "displayName": "tokens_cache_lectura",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tokens_cache_escritura",
+       "displayName": "tokens_cache_escritura",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tarifa_entrada",
+       "displayName": "tarifa_entrada",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tarifa_salida",
+       "displayName": "tarifa_salida",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "costo_usd",
+       "displayName": "costo_usd",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "reintento",
+       "displayName": "reintento",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Guardar traza",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1392,
+    48
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "Pg5AFXdN8EmEuN15",
+     "cachedResultName": "trazas"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "ts": "={{ $('L02 Procesar respuesta').first().json.fila_traza.ts }}",
+      "caso_id": "={{ $('L02 Procesar respuesta').first().json.fila_traza.caso_id }}",
+      "tipo": "={{ $('L02 Procesar respuesta').first().json.fila_traza.tipo }}",
+      "agente": "={{ $('L02 Procesar respuesta').first().json.fila_traza.agente }}",
+      "estado": "={{ $('L02 Procesar respuesta').first().json.fila_traza.estado }}",
+      "detalle": "={{ $('L02 Procesar respuesta').first().json.fila_traza.detalle }}",
+      "llamada_id": "={{ $('L02 Procesar respuesta').first().json.fila_traza.llamada_id }}",
+      "iteracion": "={{ $('L02 Procesar respuesta').first().json.fila_traza.iteracion }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tipo",
+       "displayName": "tipo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "detalle",
+       "displayName": "detalle",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "iteracion",
+       "displayName": "iteracion",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "L04 Devolver",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2432,
+    48
+   ],
+   "parameters": {
+    "jsCode": "return [{ json: $('L02 Procesar respuesta').first().json }];"
+   }
+  },
+  {
+   "name": "L05 Bloqueo",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    992,
+    480
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:l05@@"
+   }
+  },
+  {
+   "name": "L06 Devolver bloqueo",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1440,
+    480
+   ],
+   "parameters": {
+    "jsCode": "return [{ json: $('L05 Bloqueo').first().json }];"
+   }
+  },
+  {
+   "name": "Guardar traza bloqueo",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1216,
+    480
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "value": "Pg5AFXdN8EmEuN15",
+     "mode": "list",
+     "cachedResultName": "trazas",
+     "cachedResultUrl": "/projects/ZjC09NPlzAmk8snT/datatables/Pg5AFXdN8EmEuN15"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "ts": "={{ $json.fila_traza.ts }}",
+      "caso_id": "={{ $json.fila_traza.caso_id }}",
+      "tipo": "={{ $json.fila_traza.tipo }}",
+      "agente": "={{ $json.fila_traza.agente }}",
+      "estado": "={{ $json.fila_traza.estado }}",
+      "detalle": "={{ $json.fila_traza.detalle }}",
+      "llamada_id": "={{ $json.fila_traza.llamada_id }}",
+      "iteracion": "={{ $json.fila_traza.iteracion }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tipo",
+       "displayName": "tipo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "detalle",
+       "displayName": "detalle",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "iteracion",
+       "displayName": "iteracion",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      }
+     ],
+     "attemptToConvertTypes": false,
+     "convertFieldsToString": false
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "L03 Preparar entrega",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1712,
+    48
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:l03@@"
+   }
+  },
+  {
+   "name": "¿Hay entrega?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    1952,
+    48
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "strict",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "5d8ac964-e7f6-4cbd-8381-3edc24a87b69",
+       "leftValue": "={{ Boolean($json.mensaje_entrega) }}",
+       "rightValue": "",
+       "operator": {
+        "type": "boolean",
+        "operation": "true",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Informar entrega",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2192,
+    -48
+   ],
+   "parameters": {
+    "chatId": "={{ $json.mensaje_entrega.chat_id }}",
+    "text": "={{ $json.mensaje_entrega.texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+    "additionalFields": {
+     "appendAttribution": false,
+     "parse_mode": "HTML"
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "onError": "continueRegularOutput",
+   "retryOnFail": false,
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "Leer skill",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.5,
+   "position": [
+    336,
+    288
+   ],
+   "parameters": {
+    "url": "={{ $('Execute Workflow Trigger').first().json.url_instrucciones.replace('agentes/a3_propuesta.md', 'skills/cotizar-campana-dbs/SKILL.md').replace('agentes/a4_revisor.md', 'skills/revisar-propuesta-dbs/SKILL.md') }}",
+    "options": {
+     "response": {
+      "response": {
+       "responseFormat": "text"
+      }
+     }
+    }
+   }
+  }
+ ],
+ "connections": {
+  "Execute Workflow Trigger": {
+   "main": [
+    [
+     {
+      "node": "Leer instrucciones",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer instrucciones": {
+   "main": [
+    [
+     {
+      "node": "Leer skill",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "L01 Preparar llamada": {
+   "main": [
+    [
+     {
+      "node": "¿Permitido?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Permitido?": {
+   "main": [
+    [
+     {
+      "node": "Claude Messages API",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "L05 Bloqueo",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Claude Messages API": {
+   "main": [
+    [
+     {
+      "node": "L02 Procesar respuesta",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "L02 Procesar respuesta": {
+   "main": [
+    [
+     {
+      "node": "Guardar costo",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Guardar costo": {
+   "main": [
+    [
+     {
+      "node": "Guardar traza",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Guardar traza": {
+   "main": [
+    [
+     {
+      "node": "L03 Preparar entrega",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "L05 Bloqueo": {
+   "main": [
+    [
+     {
+      "node": "Guardar traza bloqueo",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Guardar traza bloqueo": {
+   "main": [
+    [
+     {
+      "node": "L06 Devolver bloqueo",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "L03 Preparar entrega": {
+   "main": [
+    [
+     {
+      "node": "¿Hay entrega?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Hay entrega?": {
+   "main": [
+    [
+     {
+      "node": "Informar entrega",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "L04 Devolver",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Informar entrega": {
+   "main": [
+    [
+     {
+      "node": "L04 Devolver",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer skill": {
+   "main": [
+    [
+     {
+      "node": "L01 Preparar llamada",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1"
+ }
+}

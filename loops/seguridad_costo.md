@@ -28,20 +28,20 @@
 
 ## Dónde se ve en la traza
 - `tipo = llamada_agente` → `detalle.controles = "agente_permitido:ok,…,tiempo_caso:ok"` y `detalle.skill`.
-- `tipo = guardrail_loop_seguridad` → `detalle.motivo`, por ejemplo `presupuesto_tokens: 24900 usados + 4100 reservados de 25000`.
+- `tipo = guardrail_loop_seguridad` → `detalle.motivo`, por ejemplo `presupuesto_tokens: 2742 usados + 1888 reservados de 3000` (G87G).
 - `tipo = cierre`, `estado = detenido_limite`.
 
 ## Evidencia
 - **Offline (CI):** `tests/test_skills.js` con 8 pruebas de controles y `tests/simular_flujo.js`. En la simulación, un presupuesto agotado y un tiempo vencido detienen sin llamar al modelo, y el caso cierra en `detenido_limite`.
 - **En n8n:** las 10 llamadas de los casos QWWR y PBT2 registran todos sus controles en `ok` (6 en A1 y A2, 7 en A3 y A4, que suman `skill_cargado`) (`evidencias/skills_loops_n8n.md`). El caso HUPJ cerró como `detenido_limite` en lugar de presentarse como éxito. Dos eventos repetidos de Telegram se detuvieron en «¿Evento nuevo?» (ejecuciones 104 y 114 de W1).
-- **Pendiente:** P09, un bloqueo por tiempo o por tokens capturado en n8n. En W3, volver a ejecutar con datos fijados (pin) de un caso con más de 5 minutos. L05 debe mostrar `tiempo_caso`. Otra opción: bajar temporalmente `limite_tokens_caso` a 3000 en O01.
+- **Bloqueo real (P09, 2026-11-05):** con `limite_tokens_caso = 3000` temporal, el caso **G87G** corrió A1 y A2 se bloqueó **antes** de llamar al modelo («2742 usados + 1888 reservados de 3000»). Traza `guardrail_loop_seguridad`, cierre `detenido_limite`; el límite se restauró a 40000.
 
 ## Autoevaluación (0–4; se exige ≥ 16/20 y ningún aspecto < 3)
 | Aspecto | Puntaje | Motivo |
 | --- | --- | --- |
 | Claridad o propósito | 4 | 5 pasos con su nodo |
 | Contexto o secuencia | 4 | Corre en cada llamada, antes y después |
-| Evidencia | 3 | CI más trazas reales con controles. Falta capturar un bloqueo real (P09) para llegar a 4 |
+| Evidencia | 4 | CI, trazas reales con controles y un bloqueo real en n8n (G87G) |
 | Control o retorno | 4 | Detiene sin reintento y con estado explícito |
 | Utilidad | 3 | Los límites de 0.05 USD y 300 s son supuestos que falta calibrar con los costos reales |
-| **Total** | **18/20** | Listo: ningún aspecto < 3 |
+| **Total** | **19/20** | Listo: ningún aspecto < 3 |

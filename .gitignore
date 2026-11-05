@@ -4,3 +4,4 @@ _site/
 *.log
 n8n/export/*credentials*
 evidencias/privado/
+n8n/export/importables/

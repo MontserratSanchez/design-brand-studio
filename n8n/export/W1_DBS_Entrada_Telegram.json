@@ -1,0 +1,1298 @@
+{
+ "name": "DBS · Entrada Telegram",
+ "nodes": [
+  {
+   "name": "Telegram Trigger",
+   "type": "n8n-nodes-base.telegramTrigger",
+   "typeVersion": 1.2,
+   "position": [
+    0,
+    304
+   ],
+   "parameters": {
+    "updates": [
+     "message",
+     "callback_query"
+    ],
+    "additionalFields": {}
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "T01 Normalizar",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    224,
+    304
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:t01@@"
+   }
+  },
+  {
+   "name": "Buscar evento",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    448,
+    304
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "name",
+     "value": "eventos"
+    },
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "event_key",
+       "keyValue": "={{ $json.event_key }}"
+      }
+     ]
+    }
+   },
+   "alwaysOutputData": true
+  },
+  {
+   "name": "¿Evento nuevo?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    672,
+    304
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $json.event_key }}",
+       "rightValue": "",
+       "operator": {
+        "type": "string",
+        "operation": "empty",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   }
+  },
+  {
+   "name": "Registrar evento",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    880,
+    304
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "name",
+     "value": "eventos"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "event_key": "={{ $('T01 Normalizar').first().json.event_key }}",
+      "ts": "={{ $('T01 Normalizar').first().json.ts_evento }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "event_key",
+       "displayName": "event_key",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      }
+     ],
+     "attemptToConvertTypes": false,
+     "convertFieldsToString": false
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Buscar usuario",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1104,
+    304
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "baZ6g9sRsm1FK6AP",
+     "cachedResultName": "usuarios"
+    },
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "telegram_user_id",
+       "keyValue": "={{ $('T01 Normalizar').first().json.telegram_user_id }}"
+      }
+     ]
+    }
+   },
+   "alwaysOutputData": true
+  },
+  {
+   "name": "T02 Autorizar y enrutar",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1328,
+    304
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:t02@@"
+   }
+  },
+  {
+   "name": "Ruta",
+   "type": "n8n-nodes-base.switch",
+   "typeVersion": 3.2,
+   "position": [
+    1552,
+    304
+   ],
+   "parameters": {
+    "rules": {
+     "values": [
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.ruta }}",
+          "rightValue": "nuevo",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "nuevo"
+      },
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.ruta }}",
+          "rightValue": "estado",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "estado"
+      },
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.ruta }}",
+          "rightValue": "aprobacion",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "aprobacion"
+      }
+     ]
+    },
+    "options": {
+     "fallbackOutput": "extra"
+    }
+   }
+  },
+  {
+   "name": "Crear caso",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1808,
+    0
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "caso_id": "={{ $json.caso_id }}",
+      "canal": "={{ $json.canal }}",
+      "usuario": "={{ $json.usuario }}",
+      "chat_id": "={{ $json.chat_id }}",
+      "texto_solicitud": "={{ $json.texto_solicitud }}",
+      "ts_solicitud": "={{ $json.ts_solicitud }}",
+      "estado": "recibido",
+      "version": 0
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "canal",
+       "displayName": "canal",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "usuario",
+       "displayName": "usuario",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "chat_id",
+       "displayName": "chat_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "texto_solicitud",
+       "displayName": "texto_solicitud",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "ts_solicitud",
+       "displayName": "ts_solicitud",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "version",
+       "displayName": "version",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Confirmar folio",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2032,
+    0
+   ],
+   "parameters": {
+    "chatId": "={{ $('T02 Autorizar y enrutar').first().json.chat_id }}",
+    "text": "={{ $('T02 Autorizar y enrutar').first().json.mensaje }}",
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "T05 Disparo",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2240,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const t = $('T02 Autorizar y enrutar').first().json;\nreturn [{ json: { caso_id: t.caso_id, canal: t.canal, usuario: t.usuario, texto_solicitud: t.texto_solicitud, chat_id: t.chat_id, ts_solicitud: t.ts_solicitud } }];"
+   }
+  },
+  {
+   "name": "Procesar caso",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    2464,
+    0
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "eiOwiTr5uprpt30F",
+     "cachedResultName": "DBS · Procesar caso (orquestador)"
+    },
+    "options": {
+     "waitForSubWorkflow": false
+    }
+   }
+  },
+  {
+   "name": "Leer caso",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1808,
+    224
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "caso_id",
+       "keyValue": "={{ $json.caso_id }}"
+      }
+     ]
+    }
+   },
+   "alwaysOutputData": true
+  },
+  {
+   "name": "T03 Formatear estado",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2032,
+    224
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:t03@@"
+   }
+  },
+  {
+   "name": "Responder estado",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2240,
+    224
+   ],
+   "parameters": {
+    "chatId": "={{ $json.chat_id }}",
+    "text": "={{ String($json.mensaje).replace(/([_*`\\[])/g, '\\\\$1') }}",
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "Buscar coordinadora",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    1808,
+    448
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "baZ6g9sRsm1FK6AP",
+     "cachedResultName": "usuarios"
+    },
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "rol",
+       "keyValue": "coordinadora"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "Leer caso aprobación",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    2032,
+    448
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "caso_id",
+       "keyValue": "={{ $('T02 Autorizar y enrutar').first().json.caso_id }}"
+      }
+     ]
+    }
+   },
+   "alwaysOutputData": true,
+   "executeOnce": true
+  },
+  {
+   "name": "T04 Validar aprobación",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2240,
+    448
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:t04@@"
+   }
+  },
+  {
+   "name": "Contestar botón",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2464,
+    448
+   ],
+   "parameters": {
+    "resource": "callback",
+    "queryId": "={{ $json.callback_id }}",
+    "additionalFields": {
+     "text": "={{ $json.aviso_coordinadora }}"
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "onError": "continueRegularOutput",
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "¿Registrar decisión?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    2688,
+    448
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $('T04 Validar aprobación').first().json.nuevo_estado }}",
+       "rightValue": "",
+       "operator": {
+        "type": "string",
+        "operation": "notEmpty",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   }
+  },
+  {
+   "name": "Actualizar decisión",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    2912,
+    448
+   ],
+   "parameters": {
+    "operation": "update",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "matchType": "allConditions",
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "caso_id",
+       "keyValue": "={{ $('T04 Validar aprobación').first().json.caso_id }}"
+      }
+     ]
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "estado": "={{ $('T04 Validar aprobación').first().json.nuevo_estado }}",
+      "decision": "={{ $('T04 Validar aprobación').first().json.decision }}",
+      "ts_decision": "={{ $('T04 Validar aprobación').first().json.ts_decision }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "decision",
+       "displayName": "decision",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "ts_decision",
+       "displayName": "ts_decision",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Traza decisión",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    3120,
+    448
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "Pg5AFXdN8EmEuN15",
+     "cachedResultName": "trazas"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "ts": "={{ $('T04 Validar aprobación').first().json.ts_decision }}",
+      "caso_id": "={{ $('T04 Validar aprobación').first().json.caso_id }}",
+      "tipo": "decision_humana",
+      "agente": "={{ $('T04 Validar aprobación').first().json.responsable }}",
+      "estado": "={{ $('T04 Validar aprobación').first().json.decision }}",
+      "detalle": "={{ $('T04 Validar aprobación').first().json.aviso_coordinadora }}",
+      "llamada_id": "",
+      "iteracion": "={{ $('T04 Validar aprobación').first().json.version || 0 }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "tipo",
+       "displayName": "tipo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "detalle",
+       "displayName": "detalle",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "iteracion",
+       "displayName": "iteracion",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "¿Avisar solicitante?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    3344,
+    448
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $('T04 Validar aprobación').first().json.ok }}",
+       "rightValue": "",
+       "operator": {
+        "type": "boolean",
+        "operation": "true",
+        "singleValue": true
+       }
+      },
+      {
+       "leftValue": "={{ $('T04 Validar aprobación').first().json.chat_id_solicitante }}",
+       "rightValue": "",
+       "operator": {
+        "type": "string",
+        "operation": "notEmpty",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   }
+  },
+  {
+   "name": "Avisar solicitante",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    3568,
+    448
+   ],
+   "parameters": {
+    "chatId": "={{ $('T04 Validar aprobación').first().json.chat_id_solicitante }}",
+    "text": "={{ $('T04 Validar aprobación').first().json.aviso_solicitante }}",
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "¿Bloqueado?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    1808,
+    672
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "leftValue": "={{ $json.ruta }}",
+       "rightValue": "bloqueado",
+       "operator": {
+        "type": "string",
+        "operation": "equals"
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   }
+  },
+  {
+   "name": "Traza guardrail",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    2032,
+    608
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "Pg5AFXdN8EmEuN15",
+     "cachedResultName": "trazas"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "ts": "={{ $json.ts_evento }}",
+      "caso_id": "SIN-CASO",
+      "tipo": "guardrail_inyeccion",
+      "agente": "entrada_telegram",
+      "estado": "bloqueado",
+      "detalle": "={{ ($json.patrones || []).join(', ') }}",
+      "llamada_id": "",
+      "iteracion": 0
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "tipo",
+       "displayName": "tipo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "detalle",
+       "displayName": "detalle",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "iteracion",
+       "displayName": "iteracion",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Responder aviso",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    2240,
+    688
+   ],
+   "parameters": {
+    "chatId": "={{ $('T02 Autorizar y enrutar').first().json.chat_id }}",
+    "text": "={{ $('T02 Autorizar y enrutar').first().json.mensaje }}",
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "credentials": {
+    "telegramApi": {
+     "name": "DBS Telegram bot"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  }
+ ],
+ "connections": {
+  "Telegram Trigger": {
+   "main": [
+    [
+     {
+      "node": "T01 Normalizar",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "T01 Normalizar": {
+   "main": [
+    [
+     {
+      "node": "Buscar evento",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Buscar evento": {
+   "main": [
+    [
+     {
+      "node": "¿Evento nuevo?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Evento nuevo?": {
+   "main": [
+    [
+     {
+      "node": "Registrar evento",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Registrar evento": {
+   "main": [
+    [
+     {
+      "node": "Buscar usuario",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Buscar usuario": {
+   "main": [
+    [
+     {
+      "node": "T02 Autorizar y enrutar",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "T02 Autorizar y enrutar": {
+   "main": [
+    [
+     {
+      "node": "Ruta",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Ruta": {
+   "main": [
+    [
+     {
+      "node": "Crear caso",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Leer caso",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Buscar coordinadora",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "¿Bloqueado?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Crear caso": {
+   "main": [
+    [
+     {
+      "node": "Confirmar folio",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Confirmar folio": {
+   "main": [
+    [
+     {
+      "node": "T05 Disparo",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "T05 Disparo": {
+   "main": [
+    [
+     {
+      "node": "Procesar caso",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer caso": {
+   "main": [
+    [
+     {
+      "node": "T03 Formatear estado",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "T03 Formatear estado": {
+   "main": [
+    [
+     {
+      "node": "Responder estado",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Buscar coordinadora": {
+   "main": [
+    [
+     {
+      "node": "Leer caso aprobación",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer caso aprobación": {
+   "main": [
+    [
+     {
+      "node": "T04 Validar aprobación",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "T04 Validar aprobación": {
+   "main": [
+    [
+     {
+      "node": "Contestar botón",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Contestar botón": {
+   "main": [
+    [
+     {
+      "node": "¿Registrar decisión?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Registrar decisión?": {
+   "main": [
+    [
+     {
+      "node": "Actualizar decisión",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Actualizar decisión": {
+   "main": [
+    [
+     {
+      "node": "Traza decisión",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Traza decisión": {
+   "main": [
+    [
+     {
+      "node": "¿Avisar solicitante?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Avisar solicitante?": {
+   "main": [
+    [
+     {
+      "node": "Avisar solicitante",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "¿Bloqueado?": {
+   "main": [
+    [
+     {
+      "node": "Traza guardrail",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Responder aviso",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Traza guardrail": {
+   "main": [
+    [
+     {
+      "node": "Responder aviso",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1"
+ }
+}

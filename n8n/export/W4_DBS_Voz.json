@@ -1,0 +1,567 @@
+{
+ "name": "DBS · Voz",
+ "nodes": [
+  {
+   "name": "Webhook",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    0,
+    192
+   ],
+   "parameters": {
+    "httpMethod": "POST",
+    "path": "dbs-voz",
+    "authentication": "headerAuth",
+    "responseMode": "responseNode",
+    "options": {}
+   },
+   "credentials": {
+    "httpHeaderAuth": {
+     "name": "DBS Voz secreto"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "V01 Validar voz",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    224,
+    192
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:v01@@"
+   }
+  },
+  {
+   "name": "Ruta voz",
+   "type": "n8n-nodes-base.switch",
+   "typeVersion": 3.2,
+   "position": [
+    448,
+    192
+   ],
+   "parameters": {
+    "rules": {
+     "values": [
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.ruta }}",
+          "rightValue": "consultar",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "consultar"
+      },
+      {
+       "conditions": {
+        "options": {
+         "caseSensitive": true,
+         "leftValue": "",
+         "typeValidation": "strict",
+         "version": 2
+        },
+        "conditions": [
+         {
+          "leftValue": "={{ $json.ruta }}",
+          "rightValue": "crear",
+          "operator": {
+           "type": "string",
+           "operation": "equals"
+          }
+         }
+        ],
+        "combinator": "and"
+       },
+       "renameOutput": true,
+       "outputKey": "crear"
+      }
+     ]
+    },
+    "options": {
+     "fallbackOutput": "extra"
+    }
+   }
+  },
+  {
+   "name": "Leer caso voz",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    704,
+    0
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "caso_id",
+       "keyValue": "={{ $json.caso_id }}"
+      }
+     ]
+    }
+   },
+   "alwaysOutputData": true
+  },
+  {
+   "name": "V02 Responder consulta",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    928,
+    0
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:v02@@"
+   }
+  },
+  {
+   "name": "Responder consulta",
+   "type": "n8n-nodes-base.respondToWebhook",
+   "typeVersion": 1.1,
+   "position": [
+    1152,
+    0
+   ],
+   "parameters": {
+    "options": {}
+   }
+  },
+  {
+   "name": "Crear caso voz",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    704,
+    208
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "caso_id": "={{ $json.caso_id }}",
+      "canal": "voz",
+      "usuario": "={{ $json.usuario }}",
+      "texto_solicitud": "={{ $json.texto_solicitud }}",
+      "ts_solicitud": "={{ $json.ts_solicitud }}",
+      "estado": "recibido",
+      "version": 0
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "canal",
+       "displayName": "canal",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "usuario",
+       "displayName": "usuario",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "chat_id",
+       "displayName": "chat_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "texto_solicitud",
+       "displayName": "texto_solicitud",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "ts_solicitud",
+       "displayName": "ts_solicitud",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "tipo_campana",
+       "displayName": "tipo_campana",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "propuesta_json",
+       "displayName": "propuesta_json",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "aprobacion_expira",
+       "displayName": "aprobacion_expira",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "ts_propuesta_lista",
+       "displayName": "ts_propuesta_lista",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "decision",
+       "displayName": "decision",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "ts_decision",
+       "displayName": "ts_decision",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "motivo",
+       "displayName": "motivo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "ts_cierre",
+       "displayName": "ts_cierre",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "version",
+       "displayName": "version",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "duracion_semanas",
+       "displayName": "duracion_semanas",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "total_mxn",
+       "displayName": "total_mxn",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "margen",
+       "displayName": "margen",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      },
+      {
+       "id": "consumo_tokens",
+       "displayName": "consumo_tokens",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "readOnly": false,
+       "removed": false
+      }
+     ],
+     "attemptToConvertTypes": false,
+     "convertFieldsToString": false
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "V03 Disparo",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    928,
+    208
+   ],
+   "parameters": {
+    "jsCode": "const v = $('V01 Validar voz').first().json;\nreturn [{ json: { caso_id: v.caso_id, canal: 'voz', usuario: v.usuario, texto_solicitud: v.texto_solicitud, chat_id: null, ts_solicitud: v.ts_solicitud } }];"
+   }
+  },
+  {
+   "name": "Procesar caso voz",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    1152,
+    208
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "value": "eiOwiTr5uprpt30F",
+     "mode": "list",
+     "cachedResultUrl": "/workflow/eiOwiTr5uprpt30F",
+     "cachedResultName": "DBS · Procesar caso (orquestador)"
+    },
+    "workflowInputs": {
+     "mappingMode": "defineBelow",
+     "value": {},
+     "matchingColumns": [],
+     "schema": [],
+     "attemptToConvertTypes": false,
+     "convertFieldsToString": true
+    },
+    "options": {
+     "waitForSubWorkflow": false
+    }
+   }
+  },
+  {
+   "name": "Responder creación",
+   "type": "n8n-nodes-base.respondToWebhook",
+   "typeVersion": 1.1,
+   "position": [
+    1360,
+    208
+   ],
+   "parameters": {
+    "respondWith": "json",
+    "responseBody": "={{ JSON.stringify({ caso_id: $('V01 Validar voz').first().json.caso_id, mensaje: $('V01 Validar voz').first().json.mensaje }) }}",
+    "options": {}
+   }
+  },
+  {
+   "name": "Responder error",
+   "type": "n8n-nodes-base.respondToWebhook",
+   "typeVersion": 1.1,
+   "position": [
+    704,
+    400
+   ],
+   "parameters": {
+    "respondWith": "json",
+    "responseBody": "={{ JSON.stringify({ mensaje: $json.mensaje }) }}",
+    "options": {
+     "responseCode": 400
+    }
+   }
+  }
+ ],
+ "connections": {
+  "Webhook": {
+   "main": [
+    [
+     {
+      "node": "V01 Validar voz",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "V01 Validar voz": {
+   "main": [
+    [
+     {
+      "node": "Ruta voz",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Ruta voz": {
+   "main": [
+    [
+     {
+      "node": "Leer caso voz",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Crear caso voz",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Responder error",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer caso voz": {
+   "main": [
+    [
+     {
+      "node": "V02 Responder consulta",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "V02 Responder consulta": {
+   "main": [
+    [
+     {
+      "node": "Responder consulta",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Crear caso voz": {
+   "main": [
+    [
+     {
+      "node": "V03 Disparo",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "V03 Disparo": {
+   "main": [
+    [
+     {
+      "node": "Procesar caso voz",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Procesar caso voz": {
+   "main": [
+    [
+     {
+      "node": "Responder creación",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1"
+ }
+}

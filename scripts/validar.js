@@ -36,6 +36,7 @@ paso('Estructura de datos de referencia', () => {
 paso('Nodos Code generados (dist/ = src/ + lib/)', () => execFileSync('node', [path.join(raiz, 'scripts/build_code_nodes.js'), '--check'], { stdio: 'pipe' }));
 paso('Pruebas de reglas deterministas', () => execFileSync('node', [path.join(raiz, 'tests/test_reglas.js')], { stdio: 'pipe' }));
 paso('Skills cargables y loop de seguridad y costo', () => execFileSync('node', [path.join(raiz, 'tests/test_skills.js')], { stdio: 'pipe' }));
+paso('Exportaciones de n8n sin secretos y armables', () => execFileSync('node', [path.join(raiz, 'scripts/armar_import.js'), '--check'], { stdio: 'pipe' }));
 paso('Prueba de concatenación (mismo caso_id de punta a punta)', () => execFileSync('node', [path.join(raiz, 'tests/simular_flujo.js')], { stdio: 'pipe' }));
 paso('Datos públicos sanitizados', () => {
   const f = 'web/data/publico.json';

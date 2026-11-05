@@ -196,7 +196,8 @@ assert.strictEqual(o07t[0].json.actualizacion_caso.estado, 'detenido_limite');
 const trazasSkill = trazas.filter(t => t.tipo === 'llamada_agente' && ['a3_propuesta', 'a4_revisor'].includes(t.agente));
 assert.ok(trazasSkill.length >= 4 && trazasSkill.every(t => /^(cotizar-campana|revisar-propuesta)-dbs@\d+\.\d+\.\d+#[0-9a-f]{8}$/.test(JSON.parse(t.detalle).skill)), 'skill registrado en la traza');
 assert.ok(costos.every(c => c.caso_id === CASO), 'todas las llamadas usan el mismo caso_id');
-assert.ok(costos.every(c => c.costo_usd === null && c.origen === 'medido_sin_tarifa'), 'sin tarifa no se reporta cero');
+// Con la tarifa oficial de O01 (0.10 / 0.50 USD por MTok) cada costo coincide con la fórmula
+assert.ok(costos.every(c => c.origen === 'medido' && Math.abs(c.costo_usd - (c.tokens_entrada * 0.10 + c.tokens_salida * 0.50) / 1e6) < 1e-9), 'costo = tokens × tarifa oficial');
 const agentes = new Set(costos.map(c => c.agente));
 assert.deepStrictEqual([...agentes].sort(), ['a1_recepcion', 'a2_catalogo', 'a3_propuesta', 'a4_revisor']);
 

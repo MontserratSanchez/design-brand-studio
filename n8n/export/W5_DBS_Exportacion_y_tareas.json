@@ -1,0 +1,457 @@
+{
+ "name": "DBS · Exportación a Pages",
+ "nodes": [
+  {
+   "name": "Cada día 20:00",
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "typeVersion": 1.2,
+   "position": [
+    0,
+    0
+   ],
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "triggerAtHour": 20
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "Leer casos",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    224,
+    0
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "returnAll": true
+   },
+   "alwaysOutputData": true,
+   "executeOnce": true
+  },
+  {
+   "name": "Leer costos",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    448,
+    0
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "value": "dBjrjXNAD1NABq9c",
+     "mode": "list",
+     "cachedResultName": "costos",
+     "cachedResultUrl": "/projects/ZjC09NPlzAmk8snT/datatables/dBjrjXNAD1NABq9c"
+    },
+    "returnAll": true
+   },
+   "alwaysOutputData": true,
+   "executeOnce": true
+  },
+  {
+   "name": "P02 Exportar sanitizado",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    672,
+    0
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:p02@@"
+   },
+   "executeOnce": true
+  },
+  {
+   "name": "Publicar datos",
+   "type": "n8n-nodes-base.github",
+   "typeVersion": 1.1,
+   "position": [
+    880,
+    0
+   ],
+   "parameters": {
+    "resource": "file",
+    "operation": "edit",
+    "owner": {
+     "__rl": true,
+     "mode": "name",
+     "value": "MontserratSanchez"
+    },
+    "repository": {
+     "__rl": true,
+     "mode": "name",
+     "value": "design-brand-studio"
+    },
+    "filePath": "={{ $json.ruta }}",
+    "fileContent": "={{ $json.contenido }}",
+    "commitMessage": "={{ $json.mensaje_commit }}"
+   },
+   "credentials": {
+    "githubApi": {
+     "name": "DBS GitHub"
+    }
+   },
+   "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "Desde orquestador",
+   "type": "n8n-nodes-base.executeWorkflowTrigger",
+   "typeVersion": 1.1,
+   "position": [
+    0,
+    192
+   ],
+   "parameters": {
+    "inputSource": "passthrough"
+   }
+  },
+  {
+   "name": "Cada hora",
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "typeVersion": 1.2,
+   "position": [
+    0,
+    420
+   ],
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "hours"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "Leer pendientes",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    224,
+    420
+   ],
+   "parameters": {
+    "operation": "get",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "matchType": "allConditions",
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "estado",
+       "keyValue": "pendiente_aprobacion"
+      }
+     ]
+    },
+    "returnAll": true
+   }
+  },
+  {
+   "name": "P01 Detectar vencidos",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    448,
+    420
+   ],
+   "parameters": {
+    "jsCode": "@@DIST:p01@@"
+   }
+  },
+  {
+   "name": "Marcar vencido",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    672,
+    420
+   ],
+   "parameters": {
+    "operation": "update",
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "nmimWJHkmXa6DDX6",
+     "cachedResultName": "casos"
+    },
+    "matchType": "allConditions",
+    "filters": {
+     "conditions": [
+      {
+       "keyName": "caso_id",
+       "keyValue": "={{ $json.caso_id }}"
+      }
+     ]
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "estado": "={{ $json.estado }}",
+      "decision": "={{ $json.decision }}",
+      "ts_decision": "={{ $json.ts_decision }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "decision",
+       "displayName": "decision",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "ts_decision",
+       "displayName": "ts_decision",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  },
+  {
+   "name": "Traza vencimiento",
+   "type": "n8n-nodes-base.dataTable",
+   "typeVersion": 1.1,
+   "position": [
+    896,
+    420
+   ],
+   "parameters": {
+    "dataTableId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "Pg5AFXdN8EmEuN15",
+     "cachedResultName": "trazas"
+    },
+    "columns": {
+     "mappingMode": "defineBelow",
+     "value": {
+      "ts": "={{ $('P01 Detectar vencidos').item.json.traza.ts }}",
+      "caso_id": "={{ $('P01 Detectar vencidos').item.json.traza.caso_id }}",
+      "tipo": "={{ $('P01 Detectar vencidos').item.json.traza.tipo }}",
+      "agente": "={{ $('P01 Detectar vencidos').item.json.traza.agente }}",
+      "estado": "={{ $('P01 Detectar vencidos').item.json.traza.estado }}",
+      "detalle": "={{ $('P01 Detectar vencidos').item.json.traza.detalle }}",
+      "llamada_id": "={{ $('P01 Detectar vencidos').item.json.traza.llamada_id }}",
+      "iteracion": "={{ $('P01 Detectar vencidos').item.json.traza.iteracion }}"
+     },
+     "matchingColumns": [],
+     "schema": [
+      {
+       "id": "ts",
+       "displayName": "ts",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "caso_id",
+       "displayName": "caso_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "tipo",
+       "displayName": "tipo",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "agente",
+       "displayName": "agente",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "estado",
+       "displayName": "estado",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "detalle",
+       "displayName": "detalle",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "llamada_id",
+       "displayName": "llamada_id",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "string",
+       "canBeUsedToMatch": true
+      },
+      {
+       "id": "iteracion",
+       "displayName": "iteracion",
+       "required": false,
+       "defaultMatch": false,
+       "display": true,
+       "type": "number",
+       "canBeUsedToMatch": true
+      }
+     ]
+    },
+    "options": {}
+   }
+  }
+ ],
+ "connections": {
+  "Cada día 20:00": {
+   "main": [
+    [
+     {
+      "node": "Leer casos",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer casos": {
+   "main": [
+    [
+     {
+      "node": "Leer costos",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer costos": {
+   "main": [
+    [
+     {
+      "node": "P02 Exportar sanitizado",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "P02 Exportar sanitizado": {
+   "main": [
+    [
+     {
+      "node": "Publicar datos",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Desde orquestador": {
+   "main": [
+    [
+     {
+      "node": "Leer casos",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Cada hora": {
+   "main": [
+    [
+     {
+      "node": "Leer pendientes",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Leer pendientes": {
+   "main": [
+    [
+     {
+      "node": "P01 Detectar vencidos",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "P01 Detectar vencidos": {
+   "main": [
+    [
+     {
+      "node": "Marcar vencido",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Marcar vencido": {
+   "main": [
+    [
+     {
+      "node": "Traza vencimiento",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1"
+ }
+}
