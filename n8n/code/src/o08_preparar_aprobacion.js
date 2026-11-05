@@ -4,6 +4,12 @@ const ctx = JSON.parse(JSON.stringify($input.first().json.ctx));
 const ahora = new Date();
 const expira = new Date(ahora.getTime() + REGLAS.aprobacion_horas * 3600 * 1000).toISOString();
 const c = ctx.calculo;
+const panel = 'https://montserratsanchez.github.io/design-brand-studio/';
+const nombres = { a1_recepcion: 'A1 · Recepción', a2_catalogo: 'A2 · Catálogo y capacidad', a3_propuesta: 'A3 · Propuesta', a4_revisor: 'A4 · Revisor' };
+const cadena = Object.entries(nombres).map(([clave, nombre]) => {
+  const pasos = (ctx.historial || []).filter(p => p.paso === clave);
+  return nombre + ': ' + (pasos.length ? pasos[pasos.length - 1].estado : 'sin traza registrada');
+}).join('\n');
 const fmt = n => '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const resumen = [
   'APROBACIÓN REQUERIDA · ' + ctx.caso_id + ' v' + ctx.version,
@@ -28,9 +34,9 @@ return [{ json: {
     tipo_campana: ctx.requerimiento.tipo_campana,
     duracion_semanas: c.semanas,
   },
-  mensaje_coordinadora: { chat_id: ctx.config.chat_id_coordinadora, texto: resumen + '\n\n' + ctx.texto_propuesta.slice(0, 2500) },
+  mensaje_coordinadora: { chat_id: ctx.config.chat_id_coordinadora, texto: resumen + '\n\n🧭 Cadena de agentes (registro de llamadas)\n' + cadena + '\n\nPanel HTML · 3 KPI y asistente de voz:\n' + panel + '\nEl panel muestra la última exportación; este caso puede aparecer después de la próxima actualización.\n\n' + ctx.texto_propuesta.slice(0, 1800) },
   callback_aprobar: 'apr:' + ctx.caso_id + ':v' + ctx.version,
   callback_rechazar: 'rec:' + ctx.caso_id + ':v' + ctx.version,
-  aviso_solicitante: { chat_id: ctx.chat_id, texto: 'Tu propuesta ' + ctx.caso_id + ' está lista y en revisión interna. Te aviso cuando haya decisión.' },
+  aviso_solicitante: { chat_id: ctx.chat_id, texto: 'Tu propuesta ' + ctx.caso_id + ' está lista y en revisión interna. Te aviso cuando haya decisión.\n\nPanel HTML (última exportación):\n' + panel },
   traza: { ts: ahora.toISOString(), caso_id: ctx.caso_id, tipo: 'solicitud_aprobacion', agente: 'orquestador', iteracion: ctx.iteracion, estado: 'pendiente_aprobacion', detalle: 'v' + ctx.version + ' total ' + c.desglose.total, llamada_id: null },
 } }];
