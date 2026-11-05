@@ -1,17 +1,17 @@
 {
-  "generado": "2026-11-05T06:31:10.352Z",
+  "generado": "2026-11-05T23:42:10.145Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
     "k1_mediana_min": 0.3,
     "k1_n": 8,
     "k2_tasa_aprobacion": 0.778,
     "k2_n": 9,
-    "k3_usd_por_caso": 0.002495,
-    "k3_n": 7,
-    "k3_casos_sin_registro": 1,
+    "k3_usd_por_caso": 0.002427,
+    "k3_n": 8,
+    "k3_casos_sin_registro": 0,
     "k3_fallidos_usd": 0.005674,
     "k3_fallidos_n": 3,
-    "k3_nota": "1 caso(s) completado(s) sin llamadas registradas quedan fuera del promedio"
+    "k3_nota": null
   },
   "casos": [
     {
@@ -364,9 +364,9 @@
         "horas_semana": 39.5,
         "capacidad_semana": null,
         "mes_capacidad": null,
-        "costo_ia_usd": null,
-        "llamadas_ia": 0,
-        "tokens_ia": 0
+        "costo_ia_usd": 0.0019538,
+        "llamadas_ia": 4,
+        "tokens_ia": 10414
       }
     },
     {
