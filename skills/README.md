@@ -31,7 +31,7 @@ Las reglas del skill que se pueden verificar con código también corren en el s
 | --- | --- | --- | --- |
 | Claridad o propósito | 4 | 4 | Objetivo, activador y salida JSON únicos |
 | Contexto o secuencia | 4 | 4 | Pasos numerados ligados a campos del contrato |
-| Evidencia | **2** | **2** | La carga se prueba en CI (huella en la traza simulada). **Falta la traza real de n8n** con `detalle.skill` en 2 casos |
+| Evidencia | 4 | 4 | Trazas reales de n8n con `detalle.skill` en 2 casos (QWWR y PBT2), con la misma huella que en CI (`aeb25fef`, `d2211991`) |
 | Control o retorno | 4 | 4 | Errores E1 y E2, límites y bloqueo si el skill no carga |
 | Utilidad | 4 | 4 | Específicos del catálogo y de las políticas de la consultora; no sirven sin cambios para otra empresa |
-| **Total** | **18/20** | **18/20** | **No listo** hasta capturar la evidencia real (P11 y un segundo caso) |
+| **Total** | **20/20** | **20/20** | Listo |

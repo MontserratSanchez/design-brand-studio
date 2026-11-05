@@ -34,20 +34,19 @@
 
 ## Evidencia V1 → V2 (prueba P11)
 - **Offline:** la ejecuta GitHub Actions en `tests/simular_flujo.js`. V1 tiene el total equivocado y se devuelve. V2 corrige y se aprueba con el mismo `caso_id`. El botón queda como `apr:<caso_id>:v2`.
-- **En n8n (pendiente de capturar):**
-  1. Poner `inyectar_falla_v1: true` en O01 y enviar un `/nuevo`.
-  2. La V1 de A3 sale sin rótulo y con una promesa. O06 la devuelve con 2 correcciones.
-  3. La V2 se aprueba.
-  4. Evidencias: fila de traza de V1 y V2 con el mismo `caso_id`, correcciones, costo de la segunda vuelta (2 filas extra en `costos`) y botón `v2`.
-  5. Regresar `inyectar_falla_v1` a `false`.
-- **Reutilización:** un segundo `/nuevo` con otro brief usa los mismos skills. Se ve en su traza la misma huella con otro `caso_id`.
+- **En n8n (2026-11-05):** caso **DBS-20261105-QWWR**, con `inyectar_falla_v1: true` solo durante la prueba.
+  - V1: A3 redactó y la falla inyectada quitó el rótulo y agregó una promesa. La revisión determinista dio 2 correcciones y A4 (skill `revisar-propuesta-dbs`) dio 2 más. Veredicto: devuelto.
+  - V2: A3 corrigió con `correcciones_previas` y A4 aprobó. Pasó a aprobación como `v2`.
+  - Costo adicional de la corrección: 2 llamadas (A3 i2 + A4 i2) con 4,292 + 1,605 y 3,613 + 399 tokens. Detalle en `evidencias/skills_loops_n8n.md`.
+- **Hallazgo previo (caso DBS-20261105-HUPJ):** la V2 se cortó por `max_tokens`, porque el razonamiento interno del modelo cuenta como salida. El loop no presentó el caso como éxito: cerró en `detenido_limite`. Corrección: A3 de 1,400 a 3,000 y A4 de 900 a 2,000.
+- **Reutilización:** caso **DBS-20261105-PBT2** (temporada, moda, 4 semanas). Usó los mismos skills (misma huella), se aprobó en V1 y dio un total de 85,840.00 MXN, que coincide con el cálculo.
 
 ## Autoevaluación (0–4 por aspecto; se exige ≥ 16/20 y ningún aspecto < 3)
 | Aspecto | Puntaje | Motivo |
 | --- | --- | --- |
 | Claridad o propósito | 4 | Secuencia y criterio de liberación explícitos |
 | Contexto o secuencia | 4 | Cada paso tiene su nodo y su función |
-| Evidencia | **2** | Hay prueba offline en CI. **Falta la captura V1→V2 en n8n** |
+| Evidencia | 4 | V1→V2 real con el mismo `caso_id`, diagnóstico, costo adicional y un segundo caso |
 | Control o retorno | 4 | Máximo 3, tiempo, presupuesto, salidas sin reintento y estado al agotar |
 | Utilidad | 4 | Evita enviar cotizaciones con cifras o promesas incorrectas |
-| **Total** | **18/20** | **No listo para entregar** hasta que Evidencia ≥ 3 (capturar P11 en n8n) |
+| **Total** | **20/20** | Listo |

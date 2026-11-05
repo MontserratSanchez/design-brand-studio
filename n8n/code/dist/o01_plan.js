@@ -435,9 +435,9 @@ const CONFIG = {
   modelo: 'claude-haiku-5-5',          // cámbialo aquí; queda registrado en costos
   tarifa_entrada_usd_mtok: null,       // registra la tarifa vigente con fuente y fecha en costos/tarifas.csv
   tarifa_salida_usd_mtok: null,        // null = costo desconocido (no se reporta 0)
-  limite_tokens_caso: 25000,           // supuesto inicial; ajustar con la primera medición
+  limite_tokens_caso: 40000,           // medido 2026-11-05: el razonamiento interno del modelo cuenta como salida (P11, caso DBS-20261105-HUPJ)
   limite_costo_usd: 0.05,              // supuesto inicial por caso
-  max_tokens: { a1_recepcion: 1200, a2_catalogo: 900, a3_propuesta: 1400, a4_revisor: 900 },
+  max_tokens: { a1_recepcion: 1200, a2_catalogo: 900, a3_propuesta: 3000, a4_revisor: 2000 },
   url_instrucciones: 'https://raw.githubusercontent.com/MontserratSanchez/design-brand-studio/main/agentes/',
   limite_iteraciones_loop: 3,
   limite_segundos_caso: 300,           // loop de seguridad y costo: tiempo máximo del caso antes de nuevas llamadas
