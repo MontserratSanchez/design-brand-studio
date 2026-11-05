@@ -288,6 +288,51 @@ function validarAprobacion(callbackData, deUsuarioId, caso, coordinadoraId, ahor
   return { ok: true, decision: accion === 'apr' ? 'aprobada' : 'rechazada', caso_id: casoId, version: Number(ver) };
 }
 
+// Ficha pública de UNA propuesta (vista ?caso=FOLIO del panel). Solo datos ficticios de la campaña:
+// nunca margen, costo interno, usuario, chat_id ni el texto libre de la solicitud.
+function fichaPublica(caso, costosCaso) {
+  let pj = {};
+  try { pj = JSON.parse(caso.propuesta_json || '{}'); } catch (e) { return null; }
+  const c = pj.calculo;
+  if (!c || !c.desglose || !Array.isArray(c.lineas)) return null;
+  const f = pj.ficha || {};
+  const semanas = Number(c.semanas) || Number(caso.duracion_semanas) || null;
+  const horas = Number(c.horas_equipo) || null;
+  const cap = f.capacidad || {};
+  const filas = Array.isArray(costosCaso) ? costosCaso : [];
+  const conCosto = filas.length > 0 && filas.every(k => k.costo_usd !== null && k.costo_usd !== undefined && k.costo_usd !== '');
+  const minutos = caso.ts_propuesta_lista && caso.ts_solicitud ? Math.round(((Date.parse(caso.ts_propuesta_lista) - Date.parse(caso.ts_solicitud)) / 60000) * 10) / 10 : null;
+  return {
+    caso_id: caso.caso_id,
+    estado: caso.estado || null,
+    decision: caso.decision || null,
+    version: Number(caso.version) || null,
+    tipo_campana: caso.tipo_campana || null,
+    objetivo: f.objetivo || null,
+    industria: f.industria || null,
+    fecha_inicio: f.fecha_inicio || null,
+    canales: Array.isArray(f.canales) ? f.canales : null,
+    semanas,
+    vigencia_dias: Number(c.vigencia_dias) || null,
+    minutos_a_propuesta: minutos,
+    servicios: c.lineas.map(l => ({ clave: l.clave, nombre: l.nombre, tipo_cobro: l.tipo_cobro, unidades: l.unidades, importe: l.importe, agregado: Array.isArray(f.agregados) ? f.agregados.includes(l.clave) : null })),
+    kpi: {
+      total_mxn: c.desglose.total,
+      honorarios_mxn: c.desglose.honorarios,
+      descuento_mxn: c.desglose.descuento,
+      iva_mxn: c.desglose.iva,
+      pauta_mxn: Number(c.inversion_pauta_informativa) || 0,
+      horas_equipo: horas,
+      horas_semana: horas && semanas ? Math.round((horas / semanas) * 10) / 10 : null,
+      capacidad_semana: cap.horas_libres_semana === undefined || cap.horas_libres_semana === null ? null : Number(cap.horas_libres_semana),
+      mes_capacidad: cap.mes || null,
+      costo_ia_usd: conCosto ? Math.round(filas.reduce((s, k) => s + Number(k.costo_usd), 0) * 1e7) / 1e7 : null,
+      llamadas_ia: filas.length,
+      tokens_ia: filas.reduce((s, k) => s + (Number(k.tokens_entrada) || 0) + (Number(k.tokens_salida) || 0), 0),
+    },
+  };
+}
+
 // Exportación sanitizada para Pages: solo agregados y columnas no personales
 function exportarSanitizado(casos, costos, ahoraISO) {
   const cols = ['caso_id', 'canal', 'estado', 'decision', 'tipo_campana', 'duracion_semanas', 'ts_solicitud', 'ts_propuesta_lista', 'version'];
@@ -329,6 +374,7 @@ function exportarSanitizado(casos, costos, ahoraISO) {
       k3_nota: notas.length ? notas.join('. ') : null,
     },
     casos: filas,
+    fichas: casos.map(c => fichaPublica(c, costos.filter(k => k.caso_id === c.caso_id))).filter(Boolean),
   };
 }
 

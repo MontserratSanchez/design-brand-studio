@@ -35,6 +35,17 @@
   .voz { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; }
   .aviso { padding:10px 12px; border-radius:8px; border:1px solid var(--line); margin-top:8px; }
   .aviso.error { border-color:var(--bad); color:var(--bad); }
+  .ficha { background:var(--surface); border:2px solid var(--accent); border-radius:12px; padding:16px; margin-bottom:8px; }
+  .ficha h2 { margin-top:0; }
+  .ficha .sub { color:var(--muted); margin:0 0 12px; font-size:.92rem; }
+  .barra { height:10px; border-radius:999px; background:var(--line); overflow:hidden; margin:8px 0 4px; }
+  .barra > span { display:block; height:100%; background:var(--accent); }
+  .barra.alerta > span { background:var(--bad); }
+  .det { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:4px 16px; margin:12px 0 0; font-size:.88rem; }
+  .det dt { color:var(--muted); } .det dd { margin:0 0 6px; font-weight:600; }
+  .barra + .def, .def .barra { margin-top:8px; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  a { color:var(--accent); }
   footer { margin-top:40px; color:var(--muted); font-size:.82rem; }
 </style>
 </head>
@@ -48,6 +59,12 @@
   </header>
 
   <main>
+    <section id="ficha" class="ficha" aria-labelledby="t-ficha" hidden tabindex="-1">
+      <h2 id="t-ficha">Propuesta</h2>
+      <div id="ficha-cuerpo" aria-live="polite"><p class="vacio">Cargando la propuesta…</p></div>
+      <p class="meta" style="margin-top:12px;"><a href="./">Ver panel general</a></p>
+    </section>
+
     <section aria-labelledby="t-kpi">
       <h2 id="t-kpi">Indicadores del proceso</h2>
       <div class="kpis" id="kpis" aria-live="polite">
@@ -64,7 +81,7 @@
       </div>
       <div class="tabla" role="region" aria-labelledby="t-casos" tabindex="0">
         <table>
-          <thead><tr><th scope="col">Folio</th><th scope="col">Canal</th><th scope="col">Estado</th><th scope="col">Decisión</th><th scope="col">Tipo de campaña</th><th scope="col">Semanas</th><th scope="col">Versión</th><th scope="col">Solicitud (UTC)</th></tr></thead>
+          <thead><tr><th scope="col">Folio (abre su ficha)</th><th scope="col">Canal</th><th scope="col">Estado</th><th scope="col">Decisión</th><th scope="col">Tipo de campaña</th><th scope="col">Semanas</th><th scope="col">Versión</th><th scope="col">Solicitud (UTC)</th></tr></thead>
           <tbody id="tbody"><tr><td colspan="8" class="vacio">Cargando…</td></tr></tbody>
         </table>
       </div>
@@ -98,7 +115,7 @@ function kpiHTML(nombre, valor, def, n) {
   const vacio = valor === null || valor === undefined;
   return '<article class="kpi"><p class="nombre">' + nombre + '</p>' +
     '<p class="valor' + (vacio ? ' vacio' : '') + '">' + (vacio ? 'Sin datos' : valor) + '</p>' +
-    '<p class="def">' + def + ' · n = ' + (n || 0) + '</p></article>';
+    '<p class="def">' + def + (n === null ? '' : ' · n = ' + (n || 0)) + '</p></article>';
 }
 
 function pintarKPI(k) {
@@ -116,7 +133,59 @@ function pintarTabla() {
   if (!datos.casos.length) { tb.innerHTML = '<tr><td colspan="8" class="vacio">Todavía no hay casos exportados.</td></tr>'; return; }
   if (!filas.length) { tb.innerHTML = '<tr><td colspan="8" class="vacio">Ningún caso coincide con los filtros.</td></tr>'; return; }
   const esc = s => String(s === null || s === undefined ? '—' : s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
-  tb.innerHTML = filas.map(c => '<tr><td>' + esc(c.caso_id) + '</td><td>' + esc(c.canal) + '</td><td class="estado">' + esc(String(c.estado || '').replace(/_/g, ' ')) + '</td><td>' + esc(c.decision) + '</td><td>' + esc(c.tipo_campana ? String(c.tipo_campana).replace(/_/g, ' ') : null) + '</td><td>' + esc(c.duracion_semanas) + '</td><td>' + esc(c.version) + '</td><td>' + esc(c.ts_solicitud ? c.ts_solicitud.slice(0, 16).replace('T', ' ') : null) + '</td></tr>').join('');
+  const conFicha = new Set((datos.fichas || []).map(f => f.caso_id));
+  tb.innerHTML = filas.map(c => '<tr><td>' + (conFicha.has(c.caso_id) ? '<a href="?caso=' + encodeURIComponent(c.caso_id) + '#ficha">' + esc(c.caso_id) + '</a>' : esc(c.caso_id)) + '</td><td>' + esc(c.canal) + '</td><td class="estado">' + esc(String(c.estado || '').replace(/_/g, ' ')) + '</td><td>' + esc(c.decision) + '</td><td>' + esc(c.tipo_campana ? String(c.tipo_campana).replace(/_/g, ' ') : null) + '</td><td>' + esc(c.duracion_semanas) + '</td><td>' + esc(c.version) + '</td><td>' + esc(c.ts_solicitud ? c.ts_solicitud.slice(0, 16).replace('T', ' ') : null) + '</td></tr>').join('');
+}
+
+// ===== Ficha de una propuesta: ?caso=DBS-AAAAMMDD-XXXX =====
+const escH = s => String(s === null || s === undefined ? '—' : s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+const mxn = n => '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const folioPedido = new URLSearchParams(location.search).get('caso');
+
+function pintarFicha() {
+  if (!folioPedido) return;
+  const sec = document.getElementById('ficha');
+  const cuerpo = document.getElementById('ficha-cuerpo');
+  sec.hidden = false;
+  document.getElementById('t-ficha').textContent = 'Propuesta ' + folioPedido;
+  if (!/^DBS-\d{8}-[A-Z0-9]{4}$/.test(folioPedido)) { cuerpo.innerHTML = '<p class="aviso error" role="alert">El folio «' + escH(folioPedido) + '» no tiene el formato DBS-AAAAMMDD-XXXX.</p>'; return; }
+  const f = (datos.fichas || []).find(x => x.caso_id === folioPedido);
+  const caso = datos.casos.find(x => x.caso_id === folioPedido);
+  if (!f) {
+    cuerpo.innerHTML = caso
+      ? '<p class="aviso" role="status">El caso existe (estado: <strong>' + escH(String(caso.estado || '').replace(/_/g, ' ')) + '</strong>) pero todavía no tiene una propuesta lista. Si se detuvo o requiere datos, no se publica una propuesta incompleta.</p>'
+      : '<p class="aviso" role="status">Todavía no hay datos publicados de este folio. Si acabas de pedirlo por Telegram, la ficha aparece en 1 a 3 minutos; recarga la página.</p>';
+    return;
+  }
+  const k = f.kpi;
+  const pct = k.capacidad_semana ? Math.round((k.horas_semana / k.capacidad_semana) * 100) : null;
+  const kpiCarga = k.horas_semana === null ? null : k.horas_semana.toLocaleString('es-MX') + ' h/sem';
+  const defCarga = (k.horas_equipo ? k.horas_equipo + ' h de equipo en ' + f.semanas + ' semanas' : 'Sin horas registradas') +
+    (pct === null ? ' · capacidad del mes no registrada en esta versión' : ' · ' + pct + ' % de ' + k.capacidad_semana + ' h libres/sem (' + escH(k.mes_capacidad) + ')') +
+    (pct === null ? '' : '<div class="barra' + (pct > 100 ? ' alerta' : '') + '" role="img" aria-label="Carga semanal: ' + pct + ' % de la capacidad libre"><span style="width:' + Math.min(pct, 100) + '%"></span></div>');
+  const kpiIA = k.costo_ia_usd === null ? null : k.costo_ia_usd.toLocaleString('es-MX', { maximumFractionDigits: 5 }) + ' USD';
+  const defIA = k.llamadas_ia + ' llamadas a los agentes · ' + k.tokens_ia.toLocaleString('es-MX') + ' tokens' + (k.costo_ia_usd === null ? ' · costo sin tarifa registrada (no se reporta cero)' : ' · tarifa Haiku 5.5 (0.10 / 0.50 USD por millón)');
+  const defTotal = 'Honorarios ' + mxn(k.honorarios_mxn) + (k.descuento_mxn ? ' − descuento ' + mxn(k.descuento_mxn) : '') + ' + IVA ' + mxn(k.iva_mxn) + (k.pauta_mxn ? ' · pauta aparte ' + mxn(k.pauta_mxn) + ' (la paga el cliente a las plataformas)' : '');
+  const filasServ = f.servicios.map(sv => '<tr><td>' + escH(sv.nombre) + (sv.agregado ? ' <span class="meta">(agregado por dependencia)</span>' : '') + '</td><td>' + escH(sv.tipo_cobro) + '</td><td class="num">' + escH(sv.unidades) + '</td><td class="num">' + mxn(sv.importe) + '</td></tr>').join('');
+  cuerpo.innerHTML =
+    '<p class="sub">' + escH(f.tipo_campana ? f.tipo_campana.replace(/_/g, ' ') : null) + ' · ' + escH(f.industria) + ' · objetivo ' + escH(f.objetivo) + ' · inicia ' + escH(f.fecha_inicio) + ' · ' + escH(f.semanas) + ' semanas' + (f.canales ? ' · ' + escH(f.canales.join(', ')) : '') + '</p>' +
+    '<div class="kpis">' +
+      kpiHTML('P1 · Total de la propuesta', mxn(k.total_mxn) + ' MXN', defTotal, null) +
+      kpiHTML('P2 · Carga del equipo', kpiCarga, defCarga, null) +
+      kpiHTML('P3 · Costo de IA del caso', kpiIA, defIA, null) +
+    '</div>' +
+    '<dl class="det">' + [
+      ['Estado', String(f.estado || '').replace(/_/g, ' ')],
+      ['Decisión', f.decision || 'pendiente'],
+      ['Versión aprobable', 'v' + f.version + (f.version > 1 ? ' (' + (f.version - 1) + (f.version - 1 === 1 ? ' corrección' : ' correcciones') + ')' : '')],
+      ['Tiempo a propuesta lista', f.minutos_a_propuesta === null ? null : f.minutos_a_propuesta + ' min'],
+      ['Vigencia', f.vigencia_dias ? f.vigencia_dias + ' días' : null],
+    ].map(([a, b]) => '<div><dt>' + escH(a) + '</dt><dd>' + escH(b) + '</dd></div>').join('') + '</dl>' +
+    '<h3 style="font-size:1rem; margin:16px 0 8px;">Servicios incluidos</h3>' +
+    '<div class="tabla" role="region" aria-label="Servicios de la propuesta" tabindex="0"><table><thead><tr><th scope="col">Servicio</th><th scope="col">Cobro</th><th scope="col" class="num">Unidades</th><th scope="col" class="num">Importe</th></tr></thead><tbody>' + filasServ +
+    '<tr><td colspan="3"><strong>Total con IVA</strong></td><td class="num"><strong>' + mxn(k.total_mxn) + '</strong></td></tr></tbody></table></div>' +
+    '<p class="rotulo">RESULTADO SIMULADO · la consultora no promete resultados de la campaña</p>';
+  if (location.hash === '#ficha') sec.focus();
 }
 
 async function cargar() {
@@ -131,10 +200,12 @@ async function cargar() {
     const estados = [...new Set(datos.casos.map(c => c.estado))].sort();
     document.getElementById('f-estado').insertAdjacentHTML('beforeend', estados.map(e => '<option value="' + e + '">' + e.replace(/_/g, ' ') + '</option>').join(''));
     pintarTabla();
+    pintarFicha();
   } catch (e) {
     document.getElementById('actualizado').textContent = 'Error al cargar los datos';
     document.getElementById('kpis').innerHTML = '<p class="aviso error" role="alert">No se pudieron cargar los indicadores (' + e.message + '). Intenta recargar la página.</p>';
     document.getElementById('tbody').innerHTML = '<tr><td colspan="8" class="vacio">Sin datos por error de carga.</td></tr>';
+    if (folioPedido) { document.getElementById('ficha').hidden = false; document.getElementById('ficha-cuerpo').innerHTML = '<p class="aviso error" role="alert">No se pudo cargar la propuesta. Consulta el estado con /estado ' + escH(folioPedido) + ' en Telegram.</p>'; }
   }
 }
 

@@ -5,7 +5,7 @@ const path = require('path');
 const assert = require('assert');
 const raiz = path.join(__dirname, '..');
 const R = new Function(fs.readFileSync(path.join(raiz, 'lib/reglas.js'), 'utf8') +
-  '\nreturn {REGLAS, validarRequerimiento, recuperarDatos, calcularPropuesta, totalesPara, revisarPropuesta, validarAprobacion, detectarInyeccion, generarCasoId, esCasoId, exportarSanitizado};')();
+  '\nreturn {REGLAS, validarRequerimiento, recuperarDatos, calcularPropuesta, totalesPara, revisarPropuesta, validarAprobacion, detectarInyeccion, generarCasoId, esCasoId, exportarSanitizado, fichaPublica};')();
 function csv(n) {
   const [c, ...f] = fs.readFileSync(path.join(raiz, 'datos', n), 'utf8').trim().split('\n');
   const k = c.split(',');
@@ -137,5 +137,34 @@ t('K3: un caso completado sin llamadas registradas no cuenta como costo 0 (error
 t('K3: sin tarifa no se reporta cero', () => {
   const k = R.exportarSanitizado([{ caso_id: 'DBS-20261104-GRPF', decision: 'aprobada' }], [{ caso_id: 'DBS-20261104-GRPF', costo_usd: null }], '2026-11-05T06:00:00Z').kpi;
   assert.strictEqual(k.k3_usd_por_caso, null);
+});
+t('Ficha pública: 3 KPI del proyecto y sin datos internos', () => {
+  const { v, d } = preparar(base);
+  const p = R.calcularPropuesta(v.requerimiento, d.datos);
+  const caso = { caso_id: 'DBS-20261105-ABCD', estado: 'pendiente_aprobacion', version: 2, tipo_campana: 'lanzamiento', margen: p.margen, usuario: 'U-SOL001', chat_id: '111', texto_solicitud: 'brief',
+    ts_solicitud: '2026-11-05T05:22:00Z', ts_propuesta_lista: '2026-11-05T05:22:30Z',
+    propuesta_json: JSON.stringify({ calculo: p, ficha: { objetivo: 'ventas', industria: 'Retail', fecha_inicio: '2027-03-15', canales: ['meta', 'google'], agregados: ['S-REP01'], capacidad: { mes: '2027-03', horas_libres_semana: 140, carga_semanal: 35 } }, texto: 'x' }) };
+  const costos = [{ costo_usd: 0.0004, tokens_entrada: 2000, tokens_salida: 400 }, { costo_usd: 0.0006, tokens_entrada: 4000, tokens_salida: 400 }];
+  const f = R.fichaPublica(caso, costos);
+  assert.strictEqual(f.kpi.total_mxn, 161147.2);
+  assert.strictEqual(f.kpi.pauta_mxn, 60000);
+  assert.strictEqual(f.kpi.horas_semana, 35);
+  assert.strictEqual(f.kpi.capacidad_semana, 140);
+  assert.strictEqual(f.kpi.costo_ia_usd, 0.001);
+  assert.strictEqual(f.kpi.llamadas_ia, 2);
+  assert.strictEqual(f.minutos_a_propuesta, 0.5);
+  assert.ok(f.servicios.find(x => x.clave === 'S-REP01').agregado);
+  const txt = JSON.stringify(f);
+  ['margen', 'U-SOL001', '"111"', 'texto_solicitud', 'costo_total'].forEach(x => assert.ok(!txt.includes(x), 'no publica ' + x));
+});
+t('Ficha pública: caso sin propuesta o JSON roto no genera ficha; propuesta antigua sin capacidad no inventa datos', () => {
+  assert.strictEqual(R.fichaPublica({ caso_id: 'DBS-20261105-ABCD', propuesta_json: '' }, []), null);
+  assert.strictEqual(R.fichaPublica({ caso_id: 'DBS-20261105-ABCD', propuesta_json: '{roto' }, []), null);
+  const { v, d } = preparar(base);
+  const p = R.calcularPropuesta(v.requerimiento, d.datos);
+  const f = R.fichaPublica({ caso_id: 'DBS-20261105-ABCD', propuesta_json: JSON.stringify({ calculo: p, texto: 'x' }) }, [{ costo_usd: null, tokens_entrada: 1, tokens_salida: 1 }]);
+  assert.strictEqual(f.kpi.capacidad_semana, null);
+  assert.strictEqual(f.industria, null);
+  assert.strictEqual(f.kpi.costo_ia_usd, null, 'sin tarifa no se reporta cero');
 });
 console.log(n + ' pruebas OK');

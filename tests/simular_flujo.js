@@ -203,6 +203,13 @@ assert.deepStrictEqual([...agentes].sort(), ['a1_recepcion', 'a2_catalogo', 'a3_
 const pub = correr('p02_exportar', it([{}]), { 'Leer casos': it([filaCaso]), 'Leer costos': it(costos) });
 const publico = JSON.parse(pub[0].json.contenido);
 assert.ok(!JSON.stringify(publico).includes('U-SOL001') && !JSON.stringify(publico).includes('"111"'), 'exportación sin seudónimos ni chat_id');
+const ficha = publico.fichas.find(f => f.caso_id === CASO);
+assert.ok(ficha, 'la propuesta tiene ficha pública');
+assert.strictEqual(ficha.kpi.total_mxn, total);
+assert.strictEqual(ficha.industria, 'Comercio minorista');
+assert.strictEqual(ficha.kpi.llamadas_ia, costos.length);
+assert.ok(!JSON.stringify(publico.fichas).includes('margen'), 'la ficha no publica el margen');
+assert.ok(apr.mensaje_coordinadora.texto.includes('?caso=' + CASO), 'Telegram lleva el enlace directo a la ficha');
 
 console.log(JSON.stringify({
   resultado: 'OK',

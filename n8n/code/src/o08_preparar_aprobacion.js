@@ -5,6 +5,18 @@ const ahora = new Date();
 const expira = new Date(ahora.getTime() + REGLAS.aprobacion_horas * 3600 * 1000).toISOString();
 const c = ctx.calculo;
 const panel = 'https://montserratsanchez.github.io/design-brand-studio/';
+const enlaceFicha = panel + '?caso=' + ctx.caso_id + '#ficha';
+const req = ctx.requerimiento || {};
+const dat = (ctx.recuperacion && ctx.recuperacion.datos) || {};
+// Datos de la campaña para la ficha pública (sin datos personales ni texto libre del cliente)
+const ficha = {
+  objetivo: req.objetivo || null,
+  industria: dat.industria ? dat.industria.nombre : null,
+  fecha_inicio: req.fecha_inicio || null,
+  canales: req.canales || null,
+  agregados: dat.agregados || [],
+  capacidad: dat.capacidad ? { mes: dat.capacidad.mes, horas_libres_semana: dat.capacidad.horas_libres_semana, carga_semanal: dat.capacidad.carga_semanal } : null,
+};
 const nombres = { a1_recepcion: 'A1 · Recepción', a2_catalogo: 'A2 · Catálogo y capacidad', a3_propuesta: 'A3 · Propuesta', a4_revisor: 'A4 · Revisor' };
 const cadena = Object.entries(nombres).map(([clave, nombre]) => {
   const pasos = (ctx.historial || []).filter(p => p.paso === clave);
@@ -27,16 +39,16 @@ return [{ json: {
     version: ctx.version,
     total_mxn: c.desglose.total,
     margen: c.margen,
-    propuesta_json: JSON.stringify({ calculo: c, texto: ctx.texto_propuesta }).slice(0, 8000),
+    propuesta_json: JSON.stringify({ calculo: c, ficha, texto: String(ctx.texto_propuesta || '').slice(0, 3000) }),
     aprobacion_expira: expira,
     ts_propuesta_lista: ahora.toISOString(),
     consumo_tokens: ctx.consumo_tokens,
     tipo_campana: ctx.requerimiento.tipo_campana,
     duracion_semanas: c.semanas,
   },
-  mensaje_coordinadora: { chat_id: ctx.config.chat_id_coordinadora, texto: resumen + '\n\n🧭 Cadena de agentes (registro de llamadas)\n' + cadena + '\n\nPanel HTML · 3 KPI y asistente de voz:\n' + panel + '\nEl panel muestra la última exportación; este caso puede aparecer después de la próxima actualización.\n\n' + ctx.texto_propuesta.slice(0, 1800) },
+  mensaje_coordinadora: { chat_id: ctx.config.chat_id_coordinadora, texto: resumen + '\n\n🧭 Cadena de agentes (registro de llamadas)\n' + cadena + '\n\n📊 Ficha de esta propuesta (3 KPI del proyecto):\n' + enlaceFicha + '\nSe publica en 1 a 3 minutos. Panel general: ' + panel + '\n\n' + ctx.texto_propuesta.slice(0, 1800) },
   callback_aprobar: 'apr:' + ctx.caso_id + ':v' + ctx.version,
   callback_rechazar: 'rec:' + ctx.caso_id + ':v' + ctx.version,
-  aviso_solicitante: { chat_id: ctx.chat_id, texto: 'Tu propuesta ' + ctx.caso_id + ' está lista y en revisión interna. Te aviso cuando haya decisión.\n\nPanel HTML (última exportación):\n' + panel },
+  aviso_solicitante: { chat_id: ctx.chat_id, texto: 'Tu propuesta ' + ctx.caso_id + ' está lista y en revisión interna. Te aviso cuando haya decisión.\n\nFicha de tu propuesta (se publica en 1 a 3 minutos):\n' + enlaceFicha },
   traza: { ts: ahora.toISOString(), caso_id: ctx.caso_id, tipo: 'solicitud_aprobacion', agente: 'orquestador', iteracion: ctx.iteracion, estado: 'pendiente_aprobacion', detalle: 'v' + ctx.version + ' total ' + c.desglose.total, llamada_id: null },
 } }];

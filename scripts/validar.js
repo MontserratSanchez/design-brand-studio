@@ -49,6 +49,12 @@ paso('Datos públicos sanitizados', () => {
     if (extra.length) throw new Error('columna no permitida en datos públicos: ' + extra.join(', '));
     if (!/^DBS-\d{8}-[A-Z0-9]{4}$/.test(c.caso_id)) throw new Error('caso_id inválido ' + c.caso_id);
   }
+  const prohibidas = ['margen', 'costo_total', 'costo_mxn', 'usuario', 'chat_id', 'texto_solicitud', 'propuesta_json', 'telegram_user_id', 'seudonimo', 'texto'];
+  const revisar = (o, ruta) => { if (o && typeof o === 'object') for (const [kk, v] of Object.entries(o)) { if (prohibidas.includes(kk)) throw new Error('campo privado en datos públicos: ' + ruta + '.' + kk); revisar(v, ruta + '.' + kk); } };
+  for (const f of d.fichas || []) {
+    if (!/^DBS-\d{8}-[A-Z0-9]{4}$/.test(f.caso_id)) throw new Error('ficha con caso_id inválido ' + f.caso_id);
+    revisar(f, f.caso_id);
+  }
   const k = d.kpi || {};
   if (k.k2_tasa_aprobacion !== null && (k.k2_tasa_aprobacion < 0 || k.k2_tasa_aprobacion > 1)) throw new Error('K2 fuera de 0-1');
 });
