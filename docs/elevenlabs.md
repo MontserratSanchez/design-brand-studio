@@ -25,6 +25,6 @@
 - 1 conversación, éxito del 100 % y **86 créditos**.
 - La consola no muestra el desglose de minutos ni el costo del LLM por conversación. Se registra como **incertidumbre** en `costos/escenarios.md`.
 
-## Pendiente de configuración (recomendado por la consola)
-- «Activar protecciones» contra inyección: no está activado. Las protecciones vigentes están en el prompt y en la validación del servidor (V01 en W4).
+## Protecciones de la consola
+- ~~«Activar protecciones»~~ **Hecho el 2026-11-05:** protecciones «Manipulación → Prompt Injection» y «Enfoque» activadas y publicadas en la rama Main. Se suman al prompt y a la validación del servidor (V01 en W4). «Contenido» y «Personalizado» quedan sin activar.
 - «Añadir pruebas» al agente: no hay pruebas automáticas en ElevenLabs. Las pruebas del proyecto están en `tests/pruebas.csv` (P03, P05b, P13).

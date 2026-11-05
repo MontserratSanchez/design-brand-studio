@@ -1,21 +1,21 @@
 # Escenarios mensuales de costo y optimización
 
-> 2026-11-05 · Fuente de los costos medidos: `costos/costos.csv` (57 llamadas registradas en n8n). Tarifas: `costos/tarifas.csv`. Cálculo reproducible: `python3 scripts/costos_escenarios.py`.
+> 2026-11-05 · Fuente de los costos medidos: `costos/costos.csv` (64 llamadas registradas en n8n; 7 restauradas el 2026-11-05 desde las ejecuciones de W3). Tarifas: `costos/tarifas.csv`. Cálculo reproducible: `python3 scripts/costos_escenarios.py`.
 > **Dato** = medido en el registro · **Supuesto** = declarado para proyectar · nada de esto es una cotización.
 
 ## 1. Costo medido por caso (LLM, Haiku 5.5 a 0.10 / 0.50 USD por millón de tokens)
 
 | Ruta del caso | Casos medidos | USD por caso (promedio) | Folios |
 | --- | --- | --- | --- |
-| Completo, sin corrección | 6 | 0.0022104 | GRPF, VMC2, PBT2, ZYFZ, QN6A, T6RE (voz) |
+| Completo, sin corrección | 7 | 0.0021737 | GRPF, H8F5 (voz), VMC2, PBT2, ZYFZ, QN6A, T6RE (voz) |
 | Completo, con 1 corrección (loop V1 → V2) | 1 | 0.0042004 | QWWR |
 | Cierre temprano (faltan datos, presupuesto o falla de la API) | 3 | 0.0003564 | TTM6, G87G, YCHN |
 | Detenido por límite (3 vueltas con salida cortada) | 1 | 0.0046049 | HUPJ |
 | Desarrollo (pruebas de construcción) | 2 | 0.0048462 | TEST, PRB1. **Subtotal aparte, no es operación** |
 
-- **Promedio de casos completados (K3):** 0.002495 USD, con n = 7 (incluye el rechazado QN6A). Coincide con el panel publicado el 2026-11-05.
+- **Promedio de casos completados (K3):** 0.002427 USD, con n = 8 (incluye el rechazado QN6A y H8F5). Coincide con el panel publicado el 2026-11-05 a las 23:42 UTC.
 - **Casos fallidos (reportados aparte):** 0.0055 USD en total. YCHN no se cobra porque la API rechazó la llamada; se registra como estimado, sin poner cero.
-- **Sin dato:** el caso de voz H8F5 no tiene filas en `costos`, así que no entra al promedio.
+- **H8F5 (voz):** sus 4 filas de costo se borraron de la tabla el 04-nov y se restauraron el 05-nov desde las ejecuciones 84–87 de W3 (0.0019538 USD). Detalle en `costos/README.md`.
 
 ## 2. Supuestos de proyección
 
@@ -34,11 +34,11 @@
 | Casos/mes | Escenario | LLM (USD) | Voz: minutos → plan ElevenLabs | n8n: ejecuciones → plan |
 | --- | --- | --- | --- | --- |
 | 100 | Base | 0.24 | 40 min → Starter 6 USD (75 min incluidos) | 1,650 → Starter 20 € |
-| 100 | Mayor | 0.32 | 200 min → Creator 22 USD (275 min) | 1,950 → Starter 20 € |
-| 1,000 | Base | 2.44 | 400 min → Pro 99 USD (1,238 min) | 9,750 → Pro 50 € (cerca del tope) |
-| 1,000 | Mayor | 3.15 | 2,000 min → Scale 299 USD (3,738 min) | 12,750 → **excede Pro**: Enterprise o self-hosted |
-| 10,000 | Base | 24.43 | 4,000 min → Scale 299 USD + excedente, o Business 990 USD | 90,750 → Enterprise o self-hosted |
-| 10,000 | Mayor | 31.53 | 20,000 min → Business 990 USD + excedente | 120,750 → Enterprise o self-hosted |
+| 100 | Mayor | 0.31 | 200 min → Creator 22 USD (275 min) | 1,950 → Starter 20 € |
+| 1,000 | Base | 2.42 | 400 min → Pro 99 USD (1,238 min) | 9,750 → Pro 50 € (cerca del tope) |
+| 1,000 | Mayor | 3.14 | 2,000 min → Scale 299 USD (3,738 min) | 12,750 → **excede Pro**: Enterprise o self-hosted |
+| 10,000 | Base | 24.18 | 4,000 min → Scale 299 USD + excedente, o Business 990 USD | 90,750 → Enterprise o self-hosted |
+| 10,000 | Mayor | 31.37 | 20,000 min → Business 990 USD + excedente | 120,750 → Enterprise o self-hosted |
 
 **Lectura para decidir** (inferencia a partir de la tabla):
 - El costo del modelo de los 4 agentes es el componente **menor**: menos de 32 USD al mes incluso con 10,000 casos.

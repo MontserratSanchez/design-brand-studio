@@ -68,6 +68,6 @@ Capturas a 390 y 1366 px, sin desplazamiento horizontal y sin errores de consola
 **Pendiente:** micrófono denegado en un dispositivo real.
 
 ### P14 · Trazabilidad y costos
-- `costos/costos.csv` tiene 57 llamadas. Las 53 exportadas junto con las trazas tienen su traza.
-- 7 llamadas trazadas **no** tienen fila de costo (H8F5 ×4, TEST ×3). Por eso H8F5 queda fuera de K3, y el panel lo informa.
-- K3 publicado (0.002495 USD, n = 7) = recálculo desde `costos.csv`.
+- `costos/costos.csv` tiene 64 llamadas, y **todas** las llamadas trazadas tienen su fila de costo.
+- 7 filas (H8F5 ×4, TEST ×3) se habían perdido en una recarga de la tabla del 04-nov. Se restauraron el 05-nov desde las ejecuciones de W3 (detalle en `costos/README.md`).
+- K3 publicado (0.002427 USD, n = 8, 0 casos sin registro; W5 ejecución 191) = recálculo desde `costos.csv`.

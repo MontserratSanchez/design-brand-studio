@@ -157,7 +157,7 @@ W5 escribe `web/data/publico.json` (exportación sanitizada) **después de cada 
 
 - Datos y empresa ficticios; muestra de 13 folios de prueba, sin metas.
 - La voz no da desglose de costo por conversación y su LLM no se midió.
-- El caso H8F5 (voz, 04-nov) no tiene filas de costo; queda fuera de K3.
+- El caso H8F5 (voz, 04-nov) perdió sus filas de costo en una recarga de la tabla; se restauraron desde las ejecuciones de W3 (ver `costos/README.md`).
 - Detalle en [`docs/informe.md`](docs/informe.md) §12.
 
 ## Uso de IA

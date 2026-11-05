@@ -33,7 +33,7 @@ Cada brief que llega exige cruzar varias cosas:
 | --- | --- | --- | --- | --- |
 | K1 · Tiempo a propuesta lista | Mediana de (ts_propuesta_lista − ts_solicitud) | min | tabla `casos` | **0.3 min**, n = 8 |
 | K2 · Tasa de aprobación humana | aprobadas / (aprobadas + rechazadas + vencidas) | % | tabla `casos` | **77.8 %**, n = 9 (7 aprobadas, 1 rechazada, 1 vencida) |
-| K3 · Costo variable por caso completado | Σ costo de LLM de casos completados / n | USD/caso | `costos.csv` | **0.002495 USD**, n = 7 |
+| K3 · Costo variable por caso completado | Σ costo de LLM de casos completados / n | USD/caso | `costos.csv` | **0.002427 USD**, n = 8 |
 
 **Limitación de los KPI:**
 - Todos los casos son de prueba y n es pequeño. Por eso no se fijan metas, y K2 refleja las decisiones de la prueba, no un comportamiento comercial.
@@ -135,6 +135,7 @@ Voz ──────┘  W4 (herramienta autenticada)        W3 × A1 · A2 ·
 - **Herramienta `gestionar_caso`:** POST a W4 con un encabezado secreto guardado en ElevenLabs y en n8n.
 - **Allowlist:** `montserratsanchez.github.io`; límite de 30 llamadas al día.
 - **Carga del widget:** solo después de marcar el consentimiento.
+- **Protecciones de la plataforma:** «Prompt Injection» y «Enfoque» activadas en ElevenLabs (05-nov), además del prompt y de la validación V01 del servidor.
 
 **Pruebas:**
 - **Consulta real desde Pages (dato, 04-nov):** el widget leyó el estado real de GRPF.
@@ -174,11 +175,11 @@ Voz ──────┘  W4 (herramienta autenticada)        W3 × A1 · A2 ·
 - **Fórmula por llamada:** Cᵢ = (T_entrada × 0.10 + T_salida × 0.50) / 1 000 000 USD.
   - Tarifa oficial de Claude Haiku 5.5 para prompts de hasta 100,000 tokens, consultada el 05-nov-2026 (`costos/tarifas.csv`).
   - Los tokens de razonamiento ya vienen en `output_tokens`, así que no se cuentan dos veces.
-- **Registro:** `costos/costos.csv` tiene 57 llamadas, cada una con caso, `llamada_id`, etapa, agente, modelo, tokens, tarifa, costo, estado, reintento y origen del dato.
+- **Registro:** `costos/costos.csv` tiene 64 llamadas, cada una con caso, `llamada_id`, etapa, agente, modelo, tokens, tarifa, costo, estado, reintento y origen del dato.
 
 | Resultado (dato) | Valor |
 | --- | --- |
-| Caso completo sin corrección (n = 6) | 0.0022104 USD |
+| Caso completo sin corrección (n = 7) | 0.0021737 USD |
 | Caso con 1 corrección (QWWR) | 0.0042004 USD |
 | Casos fallidos, reportados aparte (n = 3 con costo) | 0.005674 USD en total |
 | Pruebas de desarrollo (TEST, PRB1) | 0.0096925 USD, subtotal aparte |
@@ -216,7 +217,7 @@ El README explica:
   - ElevenLabs no da desglose de costo por conversación.
   - El LLM del agente de voz (DeepSeek Flash 4.1) no se midió.
   - Falta grabar una creación hablada y probar el micrófono denegado.
-- **H8F5:** el caso de voz del 04-nov sí corrió los agentes (4 trazas), pero sus costos no se registraron. Queda fuera de K3 y se informa.
+- **Recarga de la tabla de costos:** el 04-nov se perdieron 7 filas (H8F5 ×4, TEST ×3) al recargar la tabla desde una copia anterior. Se restauraron desde las ejecuciones de W3, pero muestra que el registro privado no es inmutable; falta un control que lo impida.
 - **Muestra:** son 13 folios de prueba. Las mezclas de rutas y los minutos de voz de los escenarios son supuestos.
 - **Falla inyectada:** en P11 la falla fue inyectada a propósito para demostrar el mecanismo. No es un error espontáneo del modelo.
 

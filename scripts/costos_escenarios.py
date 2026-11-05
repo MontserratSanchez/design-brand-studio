@@ -11,7 +11,8 @@ filas = list(csv.DictReader(open(os.path.join(RAIZ, 'costos', 'costos.csv'))))
 
 # ---- Clasificación de casos (dato: tabla privada `casos`, exportada el 2026-11-05) ----
 RUTA = {
-    'DBS-20261104-GRPF': 'completo_sin_correccion', 'DBS-20261105-VMC2': 'completo_sin_correccion',
+    'DBS-20261104-GRPF': 'completo_sin_correccion', 'DBS-20261104-H8F5': 'completo_sin_correccion',  # voz; costos restaurados el 2026-11-05
+    'DBS-20261105-VMC2': 'completo_sin_correccion',
     'DBS-20261105-PBT2': 'completo_sin_correccion', 'DBS-20261105-ZYFZ': 'completo_sin_correccion',
     'DBS-20261105-QN6A': 'completo_sin_correccion', 'DBS-20261105-T6RE': 'completo_sin_correccion',  # rechazado por la coordinadora: el proceso sí se completó
     'DBS-20261105-QWWR': 'completo_con_correccion',

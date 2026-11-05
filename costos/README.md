@@ -34,7 +34,23 @@ Fórmula por llamada (guía, p. 9): **Cᵢ = (T_entrada × P_entrada + T_salida 
 | DBS-20261105-HUPJ | detenido_limite (fallido) | 6 | 0.0046049 |
 | DBS-20261104-PRB1 y TEST | pruebas de construcción | 18 | 0.0096925 |
 
+## Investigación de H8F5 (2026-11-05)
+**Qué se encontró (dato):**
+- H8F5 **sí** pasó por los cuatro agentes: ejecuciones 84–87 de W3 (04-nov, 21:24 UTC). En cada una, el nodo «Guardar costo» corrió e insertó su fila (IDs 26–29 de la tabla `costos`).
+- La suma de tokens de esas 4 llamadas (8,133 de entrada + 2,281 de salida = 10,414) coincide con `consumo_tokens` del caso en la tabla `casos`.
+- El 04-nov a las 21:53:57 UTC, 29 minutos después, **todas** las filas con ID 1–32 desaparecieron de la tabla y se insertaron 22 filas nuevas en un solo lote (IDs 33–54, mismo `createdAt`). Ese lote volvió a cargar TEST, PRB1 y GRPF, pero no las 4 de H8F5 ni 3 de TEST.
+- *Inferencia:* fue una recarga de la tabla desde una copia anterior a H8F5. El registro de n8n no muestra quién la hizo, así que no se atribuye.
+- Las 3 filas de TEST que faltaban son llamadas fallidas (`estado = error`, sin respuesta del proveedor).
+
+**Qué se corrigió:**
+| Cambio | Dónde | Verificación |
+| --- | --- | --- |
+| Se restauraron las 7 filas desde la salida del nodo «Guardar costo» de las ejecuciones 33–35 y 84–87 de W3. H8F5 con la tarifa oficial (`origen = medido_restaurado_ejecucion`); TEST sin costo (`origen = estimado_sin_respuesta_restaurado`) | Tabla `costos` (IDs 90–96) y `costos/costos.csv` | Ahora **todas** las llamadas trazadas tienen fila de costo |
+| H8F5 = 0.0019538 USD (4 llamadas) | Ficha pública de H8F5 | Igual a la suma manual de las 4 filas |
+| K3 = 0.002427 USD, n = 8, `k3_casos_sin_registro = 0` | Panel (W5, ejecución 191) | (0.002495 × 7 + 0.0019538) / 8 = 0.0024274 |
+
+**Control para que no se repita (propuesta, no aplicada):** no recargar `costos` desde un CSV. Si hace falta corregir, usar `updateRow` sobre filas existentes y conciliar antes y después contra `trazas` (P14).
+
 ## Pendiente
-- El caso de voz **H8F5** no tiene llamadas registradas. Hay que averiguar si se creó sin pasar por los agentes.
 - Los costos de **ElevenLabs** y de las plataformas (n8n, GitHub) van en filas aparte, según la guía (p. 10).
 - Las filas de PRB1 y TEST son pruebas de construcción. Cuentan como costo de **desarrollo**, no de operación.
