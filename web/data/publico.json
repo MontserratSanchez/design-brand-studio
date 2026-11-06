@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-05T23:42:10.145Z",
+  "generado": "2026-11-06T00:42:14.945Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
     "k1_mediana_min": 0.3,
@@ -9,8 +9,8 @@
     "k3_usd_por_caso": 0.002427,
     "k3_n": 8,
     "k3_casos_sin_registro": 0,
-    "k3_fallidos_usd": 0.005674,
-    "k3_fallidos_n": 3,
+    "k3_fallidos_usd": 0.006118,
+    "k3_fallidos_n": 4,
     "k3_nota": null
   },
   "casos": [
@@ -156,6 +156,17 @@
       "ts_solicitud": "2026-11-05T06:28:49.128Z",
       "ts_propuesta_lista": "2026-11-05T06:29:05.246Z",
       "version": 1
+    },
+    {
+      "caso_id": "DBS-20261106-6S76",
+      "canal": "voz",
+      "estado": "rechazado",
+      "decision": null,
+      "tipo_campana": null,
+      "duracion_semanas": null,
+      "ts_solicitud": "2026-11-06T00:36:24.301Z",
+      "ts_propuesta_lista": null,
+      "version": 0
     }
   ],
   "fichas": [
