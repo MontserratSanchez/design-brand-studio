@@ -27,7 +27,8 @@
 ### <a id="p03"></a>P03 · Caso desde ElevenLabs
 - **Crear:** la herramienta de servidor `gestionar_caso` (W4, petición con `accion=crear`) generó **DBS-20261105-T6RE**, que pasó por A1–A4 (W2 165) con 4 filas de costo (0.0023605 USD) y quedó aprobado.
 - **Consultar:** en la sesión del 2026-11-04, el widget publicado en Pages respondió el estado real de GRPF.
-- **Pendiente:** grabar una creación **hablada** completa. La de hoy se disparó en la herramienta, no por micrófono.
+- **Creación hablada (06-nov):** en el widget publicado se inyectó como micrófono una **voz sintética** (flite, con el español escrito fonéticamente; no es la voz de la autora). El agente pidió los campos uno a uno y la herramienta creó **DBS-20261106-6S76**. El reconocimiento oyó «mil pesos» en lugar de diez mil, y la regla R2 cerró el caso como `rechazado` («la pauta requiere al menos 5000 MXN por semana») después de A1. Captura: `capturas/p03_voz_hablada_6S76.jpg`.
+- *Inferencia:* la ruta voz → herramienta → orquestador → reglas funciona con entrada hablada. Los errores de transcripción vienen de la voz sintética; con voz humana no se midieron.
 
 ### <a id="p04"></a>P04 · Aprobación, rechazo y vencimiento
 | Acción | Resultado |
@@ -65,7 +66,7 @@ Capturas a 390 y 1366 px, sin desplazamiento horizontal y sin errores de consola
 - Ficha de un caso sin propuesta.
 - Servicio de voz caído: aparece el aviso con la alternativa de Telegram.
 
-**Pendiente:** micrófono denegado en un dispositivo real.
+**Micrófono denegado (P13c):** se hizo que `getUserMedia` respondiera `NotAllowedError`, el mismo error que da el navegador cuando se bloquea el permiso. El widget muestra «Se produjo un error · Permission denied» y deja el chat de texto; la página mantiene la alternativa de Telegram. Captura: `capturas/p13c_microfono_denegado.jpg`. Es una denegación simulada en el navegador, no en otro dispositivo.
 
 ### P14 · Trazabilidad y costos
 - `costos/costos.csv` tiene 64 llamadas, y **todas** las llamadas trazadas tienen su fila de costo.

@@ -142,7 +142,8 @@ Voz ──────┘  W4 (herramienta autenticada)        W3 × A1 · A2 ·
 - **Creación por la herramienta (dato, 05-nov):** T6RE pasó por los cuatro agentes y fue aprobado.
 - **Falta de información:** la herramienta responde que el folio no tiene el formato correcto.
 - **Servicio caído:** aparece un aviso con la alternativa de Telegram.
-- **Pendiente:** probar el micrófono denegado y grabar una creación hablada completa.
+- **Creación hablada (06-nov):** con una voz sintética inyectada como micrófono, el agente creó 6S76. El reconocimiento oyó «mil pesos» y la regla R2 rechazó el caso (pauta mínima de 5,000 MXN por semana).
+- **Micrófono denegado (simulado en el navegador):** el widget muestra «Permission denied» y deja el chat de texto; la página ofrece Telegram.
 
 # 8. Interfaz y visualización (VizData)
 
@@ -200,7 +201,7 @@ Voz ──────┘  W4 (herramienta autenticada)        W3 × A1 · A2 ·
 
 # 11. Pruebas y reproducibilidad
 
-`tests/pruebas.csv` documenta P01–P14 con fecha, versión, folio, entrada, resultado esperado y obtenido, estado y evidencia. Hay 19 filas aprobadas, 1 falla corregida (P01b) y 1 pendiente (micrófono denegado).
+`tests/pruebas.csv` documenta P01–P14 con fecha, versión, folio, entrada, resultado esperado y obtenido, estado y evidencia. Hay 20 filas aprobadas, 1 aprobada con hallazgo (P03b), 1 falla corregida (P01b) y ninguna pendiente.
 
 El README explica:
 - Requisitos y versiones.
@@ -216,7 +217,7 @@ El README explica:
 - **Voz:**
   - ElevenLabs no da desglose de costo por conversación.
   - El LLM del agente de voz (DeepSeek Flash 4.1) no se midió.
-  - Falta grabar una creación hablada y probar el micrófono denegado.
+  - La creación hablada se probó con voz sintética, no humana. La transcripción falló en varios turnos (por ejemplo, «diez mil» → «mil»), y no se midió con voz real.
 - **Recarga de la tabla de costos:** el 04-nov se perdieron 7 filas (H8F5 ×4, TEST ×3) al recargar la tabla desde una copia anterior. Se restauraron desde las ejecuciones de W3, pero muestra que el registro privado no es inmutable; falta un control que lo impida.
 - **Muestra:** son 13 folios de prueba. Las mezclas de rutas y los minutos de voz de los escenarios son supuestos.
 - **Falla inyectada:** en P11 la falla fue inyectada a propósito para demostrar el mecanismo. No es un error espontáneo del modelo.
