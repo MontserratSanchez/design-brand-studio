@@ -1007,6 +1007,27 @@
     }
    },
    "webhookId": "REEMPLAZAR"
+  },
+  {
+   "name": "Actualizar panel",
+   "type": "n8n-nodes-base.executeWorkflow",
+   "typeVersion": 1.2,
+   "position": [
+    3136,
+    248
+   ],
+   "parameters": {
+    "workflowId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "g2TzYbKxFdidIO6e",
+     "cachedResultName": "DBS · Exportación a Pages"
+    },
+    "options": {
+     "waitForSubWorkflow": false
+    }
+   },
+   "onError": "continueRegularOutput"
   }
  ],
  "connections": {
@@ -1232,6 +1253,11 @@
   "Actualizar decisión": {
    "main": [
     [
+     {
+      "node": "Actualizar panel",
+      "type": "main",
+      "index": 0
+     },
      {
       "node": "Traza decisión",
       "type": "main",
