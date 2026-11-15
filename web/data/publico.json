@@ -1,9 +1,9 @@
 {
-  "generado": "2026-11-15T01:21:21.060Z",
+  "generado": "2026-11-15T01:29:53.741Z",
   "rotulo": "DATOS FICTICIOS · RESULTADO SIMULADO",
   "kpi": {
     "k1_mediana_min": 0.3,
-    "k1_n": 8,
+    "k1_n": 9,
     "k2_tasa_aprobacion": 0.778,
     "k2_n": 9,
     "k3_usd_por_caso": 0.002427,
@@ -167,6 +167,17 @@
       "ts_solicitud": "2026-11-06T00:36:24.301Z",
       "ts_propuesta_lista": null,
       "version": 0
+    },
+    {
+      "caso_id": "DBS-20261115-97AS",
+      "canal": "telegram",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "tipo_campana": "posicionamiento",
+      "duracion_semanas": 5,
+      "ts_solicitud": "2026-11-15T01:29:33.914Z",
+      "ts_propuesta_lista": "2026-11-15T01:29:52.811Z",
+      "version": 1
     }
   ],
   "fichas": [
@@ -782,6 +793,71 @@
         "costo_ia_usd": 0.0023605,
         "llamadas_ia": 4,
         "tokens_ia": 13961
+      }
+    },
+    {
+      "caso_id": "DBS-20261115-97AS",
+      "estado": "pendiente_aprobacion",
+      "decision": null,
+      "version": 1,
+      "tipo_campana": "posicionamiento",
+      "objetivo": "awareness",
+      "industria": "Tecnología",
+      "fecha_inicio": "2027-03-08",
+      "canales": [
+        "linkedin",
+        "meta"
+      ],
+      "semanas": 5,
+      "vigencia_dias": 10,
+      "minutos_a_propuesta": 0.3,
+      "servicios": [
+        {
+          "clave": "S-EST01",
+          "nombre": "Estrategia y plan de campaña",
+          "tipo_cobro": "fijo",
+          "unidades": 1,
+          "importe": 18000,
+          "agregado": false
+        },
+        {
+          "clave": "S-CON01",
+          "nombre": "Contenido para redes (10 piezas por semana)",
+          "tipo_cobro": "semanal",
+          "unidades": 5,
+          "importe": 47500,
+          "agregado": false
+        },
+        {
+          "clave": "S-PAU01",
+          "nombre": "Gestión de pauta digital",
+          "tipo_cobro": "semanal",
+          "unidades": 5,
+          "importe": 30000,
+          "agregado": false
+        },
+        {
+          "clave": "S-REP01",
+          "nombre": "Reporte semanal de resultados",
+          "tipo_cobro": "semanal",
+          "unidades": 5,
+          "importe": 15000,
+          "agregado": true
+        }
+      ],
+      "kpi": {
+        "total_mxn": 128180,
+        "honorarios_mxn": 110500,
+        "descuento_mxn": 0,
+        "iva_mxn": 17680,
+        "pauta_mxn": 40000,
+        "horas_equipo": 154,
+        "horas_semana": 30.8,
+        "capacidad_semana": 140,
+        "mes_capacidad": "2027-03",
+        "costo_ia_usd": 0.0023593,
+        "llamadas_ia": 4,
+        "tokens_ia": 13973
       }
     }
   ]
