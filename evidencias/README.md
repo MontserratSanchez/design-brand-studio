@@ -3,6 +3,7 @@
 > Datos **FICTICIOS**, operación **SIMULADA**. Las pruebas en n8n se lanzaron el 2026-11-05 en n8n Cloud. Los números de ejecución se consultan en *Executions* de cada workflow:
 > W1 Entrada Telegram · W2 Orquestador · W3 Llamar agente · W4 Voz · W5 Exportación y tareas.
 > Las capturas de pantalla viajan en el ZIP (`evidencias/capturas/`). En el repositorio público solo hay evidencia sin datos personales.
+> **Migración (14-nov-2026):** la prueba de n8n Cloud de la cuenta original (`montse.app.n8n.cloud`) terminó el 13-nov («Your trial is over», captura `evidencias/capturas/n8n_prueba_terminada.png`). El sistema se copió **sin cambios** a una cuenta nueva (`monnnn.app.n8n.cloud`): las 8 tablas con todas sus filas (14 casos, 65 costos, 94 trazas, 36 eventos, catálogo, industrias, capacidad y usuarios) y la versión publicada de los 5 workflows, con los IDs de tablas y sub-workflows reasignados y las 4 credenciales recreadas por la autora. **Verificación:** la primera exportación desde la cuenta nueva (commit `2e6740d`) dio los mismos KPI (K1 0.3 min, K2 77.8 %, K3 0.002427 USD, n = 8) y la herramienta de voz respondió el estado real de ZYFZ (W4, ejecución 2). Las pruebas P01–P14 se hicieron en la cuenta original.
 
 | Rúbrica (p. 14) | Evidencia | Dónde |
 | --- | --- | --- |
@@ -23,6 +24,10 @@
 - **DBS-20261105-ZYFZ** (generación de leads, educación, 6 semanas): W1 → W2 138 → A1–A4 → aprobación con botones y aviso → panel actualizado (W5 143) → aprobado.
 - Total 131,080.00 MXN, que coincide con el catálogo.
 - **Falla real previa, QN6A:** Telegram rechazó el mensaje de aprobación ("can't parse entities") por el guion bajo de `generacion_leads`. Se agregó el escape de Markdown en «Pedir aprobación» y «Avisar solicitante» y se repitió sin error.
+
+### P01c · Caso completo en la cuenta nueva (14-nov)
+- **DBS-20261115-97AS** (posicionamiento, tecnología, 5 semanas): W1 → W2 → A1–A4 (0.0023593 USD) → propuesta en 19 s por **128,180.00 MXN** (pauta aparte 40,000) → botón Aprobar → `cerrado_aprobado` → panel actualizado (K1 0.3, n = 9 · K2 80 %, n = 10 · K3 0.00242, n = 9).
+- Capturas: `p01_telegram_97AS_cuenta_nueva.jpg`, `ficha_97AS_cuenta_nueva.jpg`, `panel_cuenta_nueva_14nov.jpg`.
 
 ### <a id="p03"></a>P03 · Caso desde ElevenLabs
 - **Crear:** la herramienta de servidor `gestionar_caso` (W4, petición con `accion=crear`) generó **DBS-20261105-T6RE**, que pasó por A1–A4 (W2 165) con 4 filas de costo (0.0023605 USD) y quedó aprobado.

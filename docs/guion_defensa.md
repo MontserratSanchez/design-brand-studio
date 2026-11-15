@@ -8,6 +8,8 @@
 > - `tests/pruebas.csv`.
 >
 > Si algo falla en vivo, mostrar la ejecución equivalente ya registrada (folios en `evidencias/README.md`).
+>
+> **Cuenta de n8n:** desde el 14-nov el sistema corre en `monnnn.app.n8n.cloud` (la prueba de la primera cuenta venció; se migró sin cambios). Si en la defensa algo falla en vivo, usar el video `Sanchez_Montserrat_AI_Tools_Video.mp4` y las capturas.
 
 | Minuto | Qué mostrar | Qué decir (idea clave) |
 | --- | --- | --- |

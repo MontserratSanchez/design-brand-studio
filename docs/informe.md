@@ -29,11 +29,11 @@ Cada brief que llega exige cruzar varias cosas:
 
 **Indicadores del proceso** (fórmula, unidad, fuente):
 
-| KPI | Fórmula | Unidad | Fuente | Valor medido (05-nov-2026) |
+| KPI | Fórmula | Unidad | Fuente | Valor medido (14-nov-2026) |
 | --- | --- | --- | --- | --- |
-| K1 · Tiempo a propuesta lista | Mediana de (ts_propuesta_lista − ts_solicitud) | min | tabla `casos` | **0.3 min**, n = 8 |
-| K2 · Tasa de aprobación humana | aprobadas / (aprobadas + rechazadas + vencidas) | % | tabla `casos` | **77.8 %**, n = 9 (7 aprobadas, 1 rechazada, 1 vencida) |
-| K3 · Costo variable por caso completado | Σ costo de LLM de casos completados / n | USD/caso | `costos.csv` | **0.002427 USD**, n = 8 |
+| K1 · Tiempo a propuesta lista | Mediana de (ts_propuesta_lista − ts_solicitud) | min | tabla `casos` | **0.3 min**, n = 9 |
+| K2 · Tasa de aprobación humana | aprobadas / (aprobadas + rechazadas + vencidas) | % | tabla `casos` | **80 %**, n = 10 (8 aprobadas, 1 rechazada, 1 vencida) |
+| K3 · Costo variable por caso completado | Σ costo de LLM de casos completados / n | USD/caso | `costos.csv` | **0.00242 USD**, n = 9 |
 
 **Limitación de los KPI:**
 - Todos los casos son de prueba y n es pequeño. Por eso no se fijan metas, y K2 refleja las decisiones de la prueba, no un comportamiento comercial.
@@ -201,7 +201,7 @@ Voz ──────┘  W4 (herramienta autenticada)        W3 × A1 · A2 ·
 
 # 11. Pruebas y reproducibilidad
 
-`tests/pruebas.csv` documenta P01–P14 con fecha, versión, folio, entrada, resultado esperado y obtenido, estado y evidencia. Hay 20 filas aprobadas, 1 aprobada con hallazgo (P03b), 1 falla corregida (P01b) y ninguna pendiente.
+`tests/pruebas.csv` documenta P01–P14 con fecha, versión, folio, entrada, resultado esperado y obtenido, estado y evidencia. Hay 21 filas aprobadas (incluida P01c en la cuenta nueva), 1 aprobada con hallazgo (P03b), 1 falla corregida (P01b) y ninguna pendiente.
 
 El README explica:
 - Requisitos y versiones.
@@ -213,7 +213,7 @@ El README explica:
 
 # 12. Limitaciones
 
-- **Plataforma:** la prueba de n8n Cloud vence en unos días (1,000 ejecuciones y 14 días). Sin plan pagado, el bot deja de responder. Inicio y parada están documentados en el README.
+- **Plataforma:** n8n Cloud en prueba gratuita (1,000 ejecuciones y 14 días). **Migración (14-nov-2026):** la prueba de n8n Cloud de la cuenta original (`montse.app.n8n.cloud`) terminó el 13-nov («Your trial is over», captura `evidencias/capturas/n8n_prueba_terminada.png`). El sistema se copió **sin cambios** a una cuenta nueva (`monnnn.app.n8n.cloud`): las 8 tablas con todas sus filas (14 casos, 65 costos, 94 trazas, 36 eventos, catálogo, industrias, capacidad y usuarios) y la versión publicada de los 5 workflows, con los IDs de tablas y sub-workflows reasignados y las 4 credenciales recreadas por la autora. **Verificación:** la primera exportación desde la cuenta nueva (commit `2e6740d`) dio los mismos KPI (K1 0.3 min, K2 77.8 %, K3 0.002427 USD, n = 8) y la herramienta de voz respondió el estado real de ZYFZ (W4, ejecución 2). Las pruebas P01–P14 se hicieron en la cuenta original. La cuenta nueva también es de prueba: sin plan pagado, vence en 14 días.
 - **Voz:**
   - ElevenLabs no da desglose de costo por conversación.
   - El LLM del agente de voz (DeepSeek Flash 4.1) no se midió.

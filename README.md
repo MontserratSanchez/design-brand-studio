@@ -134,12 +134,18 @@ W5 escribe `web/data/publico.json` (exportación sanitizada) **después de cada 
 | Aprobación ligada a usuario, folio, versión y vencimiento de 24 h | T04 + W5 |
 | Sin secretos en repositorio ni en Pages | `scripts/revisar_secretos.js` en Actions |
 
+## Entrega
+
+- Video de 7 min 12 s: `Sanchez_Montserrat_AI_Tools_Video.mp4` (va junto al ZIP; sin narración, con texto en pantalla y capturas reales).
+- Guion de defensa: `docs/guion_defensa.md`.
+
 ## Iniciar y detener
 
 - **Iniciar:** activa W1, W4 y W5 en n8n. El bot responde en cuanto W1 está publicado.
 - **Detener:** desactiva W1 (Telegram deja de recibir), W4 (la voz responde con error y el panel muestra la alternativa) y W5. Las tablas no se borran.
 - **Compartir el bot:** solo por el canal privado del curso. Para que alguien pueda aprobar, agrega su ID de Telegram en la tabla `usuarios` con rol `coordinadora`; cualquier otro ID recibe «no autorizado».
 - **Límites de la prueba de n8n Cloud:** 14 días y 1,000 ejecuciones. Cada caso completo usa unas 12 ejecuciones.
+- **Migración (14-nov-2026):** la prueba de n8n Cloud de la cuenta original (`montse.app.n8n.cloud`) terminó el 13-nov («Your trial is over», captura `evidencias/capturas/n8n_prueba_terminada.png`). El sistema se copió **sin cambios** a una cuenta nueva (`monnnn.app.n8n.cloud`): las 8 tablas con todas sus filas (14 casos, 65 costos, 94 trazas, 36 eventos, catálogo, industrias, capacidad y usuarios) y la versión publicada de los 5 workflows, con los IDs de tablas y sub-workflows reasignados y las 4 credenciales recreadas por la autora. **Verificación:** la primera exportación desde la cuenta nueva (commit `2e6740d`) dio los mismos KPI (K1 0.3 min, K2 77.8 %, K3 0.002427 USD, n = 8) y la herramienta de voz respondió el estado real de ZYFZ (W4, ejecución 2). Las pruebas P01–P14 se hicieron en la cuenta original.
 
 ## Solución de problemas
 
@@ -158,6 +164,7 @@ W5 escribe `web/data/publico.json` (exportación sanitizada) **después de cada 
 - Datos y empresa ficticios; muestra de 13 folios de prueba, sin metas.
 - La voz no da desglose de costo por conversación y su LLM no se midió.
 - El caso H8F5 (voz, 04-nov) perdió sus filas de costo en una recarga de la tabla; se restauraron desde las ejecuciones de W3 (ver `costos/README.md`).
+- El sistema corre en una segunda cuenta de prueba de n8n Cloud desde el 14-nov-2026 (la primera venció); ver «Iniciar y detener».
 - Detalle en [`docs/informe.md`](docs/informe.md) §12.
 
 ## Uso de IA
